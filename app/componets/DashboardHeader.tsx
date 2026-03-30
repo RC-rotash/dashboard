@@ -41,36 +41,10 @@ export default function DashboardHeader() {
       {/* 🔹 Left */}
       <div className="flex items-center gap-3">
         <h1 className="text-base font-semibold text-gray-800">
-          Analytics Dashboard
+          Analytics
         </h1>
       </div>
-
-      {/* 🔹 Center - Wide Search */}
-      <div className="flex-1 flex justify-center px-6">
-        <div className="w-full max-w-xl flex items-center border border-gray-200 bg-gray-50 rounded-lg px-3 py-2">
-          <Search size={16} className="text-gray-400" />
-          <input
-            placeholder="Search anything..."
-            className="ml-2 w-full bg-transparent outline-none text-sm placeholder:text-gray-400"
-          />
-        </div>
-      </div>
-
-      {/* 🔹 Right */}
       <div className="flex items-center gap-3">
-
-        {/* Settings */}
-        <button className="p-2 rounded-lg hover:bg-gray-100 transition">
-          <Settings size={18} className="text-gray-600" />
-        </button>
-
-        {/* Notification */}
-        <button className="relative p-2 rounded-lg hover:bg-gray-100 transition">
-          <Bell size={18} className="text-gray-600" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-        </button>
-
-        {/* Profile */}
         <div className="relative" ref={menuRef}>
           <div
             onClick={() => setOpen(!open)}
