@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <div className="flex min-h-screen bg-gray-100">
 
         {/* Sidebar */}
-        <aside className={`fixed top-0 left-0 w-60 h-full bg-white border-r shadow-lg
+        <aside className={`fixed top-0 scrollbar-hide left-0 w-60 h-full bg-white border-r border-gray-2.00 shadow-lg
         overflow-y-auto z-50 transition-transform
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
 
@@ -84,7 +84,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     {item.label}
                   </div>
 
-                  <ChevronRight size={16} />
+                  {/* <ChevronRight size={16} /> */}
                 </Link>
               );
             })}

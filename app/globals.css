@@ -16,13 +16,15 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ffffff;
+   --font-poppins: 'Poppins', sans-serif;
   }
 }
 
 body {
-  background: 'white';
+  font-family: var(--font-poppins);
+  background-color: #f8fafc; /* optional dashboard bg */
+  color: #3e3e3f;
 
-  font-family: Arial, Helvetica, sans-serif;
 }
 /* Hide scrollbar for Chrome, Safari */
 .scrollbar-hide::-webkit-scrollbar {
