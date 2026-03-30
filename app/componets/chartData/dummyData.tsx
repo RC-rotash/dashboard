@@ -1,0 +1,128 @@
+export const data = [
+  { hour: "12 AM", revenue: 500 },    // Night low usage
+  { hour: "3 AM", revenue: 300 },
+  { hour: "6 AM", revenue: 800 },     // Early morning
+  { hour: "9 AM", revenue: 2000 },    // Morning peak
+  { hour: "12 PM", revenue: 5000 },   // Afternoon
+  { hour: "3 PM", revenue: 7000 },    // Afternoon high
+  { hour: "6 PM", revenue: 10000 },   // Evening peak
+  { hour: "9 PM", revenue: 4000 },    // Nightfall
+];
+// componets/chartData/dummyData.ts
+export const pieDataDayOfWeek = [
+  { name: "Delhi", value: 13.7 },
+  { name: "Noida", value: 16.2 },
+  { name: "Gurgaon", value: 16.3 },
+  { name: "Faridabad", value: 16.9 },
+  { name: "Ghaziabad", value: 15.7 },
+  { name: "Meerut", value: 12.1 },
+  { name: "Agra", value: 9.1 },
+  { name: "Jaipur", value: 11.5 },
+  { name: "Lucknow", value: 10.2 },
+  { name: "Kanpur", value: 8.3 },
+];
+export const chargerData = [
+  { name: "KW Delhi 6 Mall RC 60kW DC by Reliable Charge", installation: "Jan 1, 2025", units: 38474, avgSpeed: 30, revenue: 943728, avgUnitTransaction: 17, avgDuration: 33, revenuePercent: "16.87%" },
+  { name: "Sector 135 RC 120kW DC by Reliable Charge", installation: "May 15, 2025", units: 34038, avgSpeed: 30, revenue: 602849, avgUnitTransaction: 17, avgDuration: 39, revenuePercent: "10.78%" },
+  { name: "Hotel Highway King Shahpura RC 120kW DC by Reliable Charge", installation: null, units: 18345, avgSpeed: 36, revenue: 454578, avgUnitTransaction: 16, avgDuration: 29, revenuePercent: "8.13%" },
+  { name: "Sector 135 RC 60kW DC by Reliable Charge", installation: "May 15, 2025", units: 21371, avgSpeed: 16, revenue: 360517, avgUnitTransaction: 11, avgDuration: 48, revenuePercent: "6.44%" },
+  { name: "Hotel Highway King Neelka RC 120kW DC by Reliable Charge", installation: "Oct 27, 2025", units: 12539, avgSpeed: 36, revenue: 310719, avgUnitTransaction: 18, avgDuration: 30, revenuePercent: "5.55%" },
+  { name: "Hotel Highway King Bilaspur RC 120kW DC by Reliable Charge", installation: null, units: 9468, avgSpeed: 37, revenue: 234623, avgUnitTransaction: 17, avgDuration: 28, revenuePercent: "4.19%" },
+  { name: "Noida Hub RC 60kW DC Charger 3 by Reliable Charge", installation: "May 15, 2025", units: 12546, avgSpeed: 13, revenue: 207643, avgUnitTransaction: 9, avgDuration: 44, revenuePercent: "3.71%" },
+  { name: "Shiva Dhaba Hapur RC 60kW DC by Reliable Charge", installation: "Apr 26, 2025", units: 9070, avgSpeed: 27, revenue: 202178, avgUnitTransaction: 13, avgDuration: 30, revenuePercent: "3.61%" },
+  { name: "Noida Hub RC 60kW DC Charger 2 by Reliable Charge", installation: "May 15, 2025", units: 10594, avgSpeed: 14, revenue: 183508, avgUnitTransaction: 9, avgDuration: 45, revenuePercent: "3.28%" },
+  { name: "Noida Hub RC 60kW DC Charger 4 by Reliable Charge", installation: "May 15, 2025", units: 10768, avgSpeed: 14, revenue: 176773, avgUnitTransaction: 9, avgDuration: 44, revenuePercent: "3.16%" },
+  { name: "Noida Sector 2 RC 60 kW DC by Reliable Charge", installation: "Nov 20, 2024", units: 8587, avgSpeed: 15, revenue: 162273, avgUnitTransaction: 18, avgDuration: 360, revenuePercent: "2.9%" },
+  { name: "Noida Hub RC 60kW DC Charger 5 by Reliable Charge", installation: "May 15, 2025", units: 9679, avgSpeed: 14, revenue: 158353, avgUnitTransaction: 9, avgDuration: 43, revenuePercent: "2.83%" },
+  { name: "Noida Hub RC 60kW DC Charger 6 by Reliable Charge", installation: "May 15, 2025", units: 8247, avgSpeed: 13, revenue: 135338, avgUnitTransaction: 10, avgDuration: 49, revenuePercent: "2.42%" },
+  { name: "Shiva Dhaba Mama Yadav Garh Mukteshwar RC 60kW DC by Reliable Charge", installation: "Jul 30, 2025", units: 5713, avgSpeed: 30, revenue: 128091, avgUnitTransaction: 13, avgDuration: 31, revenuePercent: "2.29%" },
+  { name: "Noida Hub RC 60kW DC Charger 1 by Reliable Charge", installation: "May 15, 2025", units: 7635, avgSpeed: 17, revenue: 121157, avgUnitTransaction: 10, avgDuration: 42, revenuePercent: "2.17%" },
+  { name: "Bhairon Marg RC 60kW DC by Reliable Charge", installation: "Aug 14, 2025", units: 4935, avgSpeed: 27, revenue: 101522, avgUnitTransaction: 14, avgDuration: 35, revenuePercent: "1.81%" },
+  { name: "Shiva Dhaba Garh Mukteshwar RC 60kW DC by Reliable Charge", installation: "Jun 24, 2025", units: 4516, avgSpeed: 32, revenue: 101237, avgUnitTransaction: 15, avgDuration: 34, revenuePercent: "1.81%" },
+  { name: "Shiva Dhaba Mama Yadav Athsaini RC 120kW DC by Reliable Charge", installation: "Sep 22, 2025", units: 4480, avgSpeed: 41, revenue: 100434, avgUnitTransaction: 16, avgDuration: 25, revenuePercent: "1.8%" },
+  { name: "Bhogal RC 10kW AC by Reliable Charge", installation: "Sep 6, 2025", units: 3887, avgSpeed: 2, revenue: 68790, avgUnitTransaction: 4, avgDuration: 105, revenuePercent: "1.23%" },
+  { name: "Rajokri RC 60kW DC by Reliable Charge", installation: "Nov 6, 2025", units: 2824, avgSpeed: 32, revenue: 59987, avgUnitTransaction: 20, avgDuration: 38, revenuePercent: "1.07%" },
+  { name: "Noida Sector 2 RC 22 kW AC by Reliable Charge", installation: "Nov 20, 2024", units: 4227, avgSpeed: 7, revenue: 54141, avgUnitTransaction: 15, avgDuration: 150, revenuePercent: "0.97%" },
+  { name: "Noida Hub RC 7.4kW AC Charger 2 by Reliable Charge", installation: "May 15, 2025", units: 2868, avgSpeed: 5, revenue: 47811, avgUnitTransaction: 7, avgDuration: 90, revenuePercent: "0.85%" },
+  { name: "Airport road RC 60 kW DC by Reliable Charge", installation: "Oct 18, 2025", units: 2127, avgSpeed: 31, revenue: 44567, avgUnitTransaction: 16, avgDuration: 31, revenuePercent: "0.8%" },
+  { name: "Parx Laureate RC 44kW AC 1 by Reliable Charge", installation: "Nov 17, 2025", units: 3088, avgSpeed: 6, revenue: 42315, avgUnitTransaction: 19, avgDuration: 164, revenuePercent: "0.76%" },
+  { name: "Noida Hub RC 7.4kW AC Charger 1 by Reliable Charge", installation: "May 15, 2025", units: 2524, avgSpeed: 4, revenue: 42071, avgUnitTransaction: 8, avgDuration: 113, revenuePercent: "0.75%" },
+  { name: "Shiva Dhaba Avneesh Sharma Bajheri RC 60kW DC by Reliable Charge", installation: "Nov 17, 2025", units: 1757, avgSpeed: 10, revenue: 39400, avgUnitTransaction: 15, avgDuration: 681, revenuePercent: "0.7%" },
+  { name: "Parx Laureate RC 44kW AC 2 by Reliable Charge", installation: "Nov 17, 2025", units: 2804, avgSpeed: 8, revenue: 38963, avgUnitTransaction: 20, avgDuration: 177, revenuePercent: "0.7%" },
+  { name: "Noida Hub RC 60kW DC Charger 7 by Reliable Charge", installation: "May 15, 2025", units: 2086, avgSpeed: 15, revenue: 34645, avgUnitTransaction: 9, avgDuration: 41, revenuePercent: "0.62%" },
+  { name: "Noida Hub RC 60kW DC Charger 8 by Reliable Charge", installation: "May 15, 2025", units: 1910, avgSpeed: 15, revenue: 31979, avgUnitTransaction: 9, avgDuration: 42, revenuePercent: "0.57%" },
+  { name: "Munirka Near Udupi RC 60kW DC by Reliable Charge", installation: "Oct 1, 2025", units: 1494, avgSpeed: 27, revenue: 31651, avgUnitTransaction: 14, avgDuration: 30, revenuePercent: "0.57%" },
+  { name: "MCD Parking near Lakshmi Nagar metro RC 60kW DC by Reliable Charge", installation: "Dec 12, 2025", units: 1395, avgSpeed: 37, revenue: 29620, avgUnitTransaction: 22, avgDuration: 36, revenuePercent: "0.53%" },
+  { name: "G S Center Point RC 22 kW AC 1 by Reliable Charge", installation: "Jan 25, 2025", units: 1113, avgSpeed: 6, revenue: 23548, avgUnitTransaction: 12, avgDuration: 115, revenuePercent: "0.42%" },
+  { name: "Airport road RC 10kW AC by Reliable Charge", installation: "Oct 18, 2025", units: 1286, avgSpeed: 3, revenue: 22824, avgUnitTransaction: 2, avgDuration: 49, revenuePercent: "0.41%" },
+  { name: "Nelson Mandela Road RC 10kW AC by Reliable Charge", installation: "Oct 1, 2025", units: 1218, avgSpeed: 2, revenue: 21567, avgUnitTransaction: 7, avgDuration: 162, revenuePercent: "0.39%" },
+  { name: "CGO Complex RC 10kW AC by Reliable Charge", installation: "Oct 4, 2025", units: 921, avgSpeed: 2, revenue: 16304, avgUnitTransaction: 3, avgDuration: 107, revenuePercent: "0.29%" },
+  { name: "Bhogal RC 60kW DC by Reliable Charge", installation: "Sep 6, 2025", units: 745, avgSpeed: 30, revenue: 15752, avgUnitTransaction: 13, avgDuration: 38, revenuePercent: "0.28%" },
+  { name: "Parx Laureate RC 11kW AC 3 by Reliable Charge", installation: "Nov 17, 2025", units: 1051, avgSpeed: 4, revenue: 14255, avgUnitTransaction: 23, avgDuration: 435, revenuePercent: "0.25%" },
+  { name: "G S Center Point RC 22 kW AC 2 by Reliable Charge", installation: "Jan 25, 2025", units: 648, avgSpeed: 7, revenue: 13763, avgUnitTransaction: 15, avgDuration: 129, revenuePercent: "0.25%" },
+  { name: "Pragati Maidan Mtka Peer RC 44kW AC by Reliable Charge", installation: "Oct 1, 2025", units: 992, avgSpeed: 6, revenue: 13474, avgUnitTransaction: 18, avgDuration: 159, revenuePercent: "0.24%" },
+  { name: "Parx Laureate RC 11kW AC 4 by Reliable Charge", installation: "Nov 17, 2025", units: 922, avgSpeed: 4, revenue: 12508, avgUnitTransaction: 20, avgDuration: 443, revenuePercent: "0.22%" },
+  { name: "Parx Laureate RC 7.4kW AC 3 by Reliable Charge", installation: "Nov 17, 2025", units: 919, avgSpeed: 5, revenue: 12472, avgUnitTransaction: 21, avgDuration: 289, revenuePercent: "0.22%" },
+  { name: "Shiva Dhaba Avneesh Sharma Barla RC 60kW DC by Reliable Charge", installation: "Nov 27, 2025", units: 522, avgSpeed: 30, revenue: 12049, avgUnitTransaction: 13, avgDuration: 24, revenuePercent: "0.22%" },
+  { name: "Parx Laureate RC 11kW AC 1 by Reliable Charge", installation: "Nov 17, 2025", units: 808, avgSpeed: 4, revenue: 10960, avgUnitTransaction: 19, avgDuration: 412, revenuePercent: "0.2%" },
+  { name: "Parx Laureate RC 7.4kW AC 2 by Reliable Charge", installation: "Nov 17, 2025", units: 799, avgSpeed: 6, revenue: 10845, avgUnitTransaction: 16, avgDuration: 175, revenuePercent: "0.19%" },
+  { name: "Parx Laureate RC 11kW AC 2 by Reliable Charge", installation: "Nov 17, 2025", units: 757, avgSpeed: 3, revenue: 10277, avgUnitTransaction: 19, avgDuration: 409, revenuePercent: "0.18%" },
+  { name: "DDA Shopping complex Rajdhani Enclave RC 60kW DC by Reliable Charge", installation: "Dec 12, 2025", units: 445, avgSpeed: 34, revenue: 9448, avgUnitTransaction: 22, avgDuration: 40, revenuePercent: "0.17%" },
+  { name: "BigBazaar Ameerpet RC 22 kW AC 1 by Reliable Charge", installation: "Jan 25, 2025", units: 429, avgSpeed: 10, revenue: 9114, avgUnitTransaction: 19, avgDuration: 100, revenuePercent: "0.16%" },
+  { name: "Parx Laureate RC 7.4kW AC 6 by Reliable Charge", installation: "Nov 17, 2025", units: 591, avgSpeed: 5, revenue: 8025, avgUnitTransaction: 18, avgDuration: 221, revenuePercent: "0.14%" },
+  { name: "Parx Laureate RC 7.4kW AC 4 by Reliable Charge", installation: "Nov 17, 2025", units: 566, avgSpeed: 5, revenue: 7676, avgUnitTransaction: 23, avgDuration: 259, revenuePercent: "0.14%" },
+  { name: "Noida Hub RC 10kW AC Charger 1 by Reliable Charge", installation: "May 15, 2025", units: 390, avgSpeed: 4, revenue: 7579, avgUnitTransaction: 3, avgDuration: 73, revenuePercent: "0.14%" },
+];
+
+export const splitChartData = [
+  { name: "Mon", uv: 1200 },
+  { name: "Tue", uv: 1800 },
+  { name: "Wed", uv: -900 },
+  { name: "Thu", uv: 2200 },
+  { name: "Fri", uv: -1500 },
+  { name: "Sat", uv: 2600 },
+  { name: "Sun", uv: 1900 },
+];
+export const interactiveData = [
+  { label: "Mon", value: 1200 },
+  { label: "Tue", value: 2100 },
+  { label: "Wed", value: 800 },
+  { label: "Thu", value: 1600 },
+  { label: "Fri", value: 2400 },
+  { label: "Sat", value: 3000 },
+  { label: "Sun", value: 1800 },
+
+  // next week pattern
+  { label: "Mon 2", value: 1400 },
+  { label: "Tue 2", value: 2300 },
+  { label: "Wed 2", value: 900 },
+  { label: "Thu 2", value: 1700 },
+  { label: "Fri 2", value: 2600 },
+  { label: "Sat 2", value: 3200 },
+  { label: "Sun 2", value: 2000 },
+
+   // next week pattern
+  { label: "Mon 3", value: 1400 },
+  { label: "Tue 3", value: 3300 },
+  { label: "Wed 3", value: 900 },
+  { label: "Thu 3", value: 1700 },
+  { label: "Fri 3", value: 3600 },
+  { label: "Sat 3", value: 3300 },
+  { label: "Sun 3", value: 2000 },
+
+    { label: "Mon 4", value: 1400 },
+  { label: "Tue 4", value: 400 },
+  { label: "Wed 4", value: 900 },
+  { label: "Thu 4", value: 1700 },
+  { label: "Fri 4", value: 4600 },
+  { label: "Sat 4", value: 400 },
+  { label: "Sun 4", value: 2000 },
+];
+export const composedData = [
+  { name: "Mon", uv: 590, pv: 800, amt: 1400, cnt: 490 },
+  { name: "Tue", uv: 868, pv: 967, amt: 1506, cnt: 590 },
+  { name: "Wed", uv: 1397, pv: 1098, amt: 989, cnt: 350 },
+  { name: "Thu", uv: 1480, pv: 1200, amt: 1228, cnt: 480 },
+  { name: "Fri", uv: 1520, pv: 1108, amt: 1100, cnt: 460 },
+  { name: "Sat", uv: 1400, pv: 680, amt: 1700, cnt: 380 },
+];
