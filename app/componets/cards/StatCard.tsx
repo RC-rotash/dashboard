@@ -1,45 +1,4 @@
-// // export default function StatCard({ title, value }: any) {
-// //   return (
-// //     <div className="h-full flex flex-col justify-center">
-// //       <p className="text-gray-500 text-lg text-center">{title}</p>
-// //       <h2 className="text-sm text-center">{value}</h2>
-// //     </div>
-// //   );
-// // }
 
-// import { TrendingUp, TrendingDown } from "lucide-react";
-
-// interface Props {
-//   title: string;
-//   value: string;
-//   change?: string;
-//   positive?: boolean;
-// }
-
-// export default function StatCard({ title, value, change, positive = true }: Props) {
-//   return (
-//     <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 hover:shadow-md transition-all">
-      
-//       {/* Title */}
-//       <p className="text-xs text-gray-500">{title}</p>
-
-//       {/* Value */}
-//       <div className="flex items-center justify-between mt-2">
-//         <h2 className="text-lg font-semibold text-gray-800">{value}</h2>
-
-//         {change && (
-//           <div
-//             className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full
-//               ${positive ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}
-//           >
-//             {positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-//             {change}
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 interface Props {
@@ -47,38 +6,69 @@ interface Props {
   value: string;
   change?: string;
   positive?: boolean;
+  variant?:
+    | "blue"
+    | "green"
+    | "purple"
+    | "orange"
+    | "pink"
+    | "indigo"
+    | "teal"
+    | "yellow"
+    | "red"
+    | "cyan";
 }
 
-export default function StatCard({ title, value, change, positive = true }: Props) {
+const gradientMap = {
+  blue: "from-blue-100 via-blue-50 to-blue-100",
+  green: "from-green-100 via-green-50 to-green-100",
+  purple: "from-purple-100 via-purple-50 to-purple-100",
+  orange: "from-orange-100 via-orange-50 to-orange-100",
+  pink: "from-pink-100 via-pink-50 to-pink-100",
+  indigo: "from-indigo-100 via-indigo-50 to-indigo-100",
+  teal: "from-teal-100 via-teal-50 to-teal-100",
+  yellow: "from-yellow-100 via-yellow-50 to-yellow-100",
+  red: "from-red-100 via-red-50 to-red-100",
+  cyan: "from-cyan-100 via-cyan-50 to-cyan-100",
+};
+export default function StatCard({
+  title,
+  value,
+  change,
+  positive = true,
+  variant = "blue",
+}: Props) {
   return (
-    <div className="relative overflow-hidden rounded-2xl p-4 border border-gray-100 shadow-sm transition-all duration-300 
-    bg-gradient-to-br from-white via-blue-50 to-white
-    hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02]">
+    <div
+      className={`rounded-2xl p-[1px] bg-gradient-to-r ${gradientMap[variant]} hover:shadow-md transition`}
+    >
+      <div className="relative overflow-hidden rounded-2xl p-4">
 
-      {/* Glow Effect */}
-      <div className="absolute inset-0 opacity-0 hover:opacity-100 transition duration-500 bg-gradient-to-r from-blue-100/20 via-transparent to-blue-100/20"></div>
+        {/* Glow Effect */}
+        <div className="absolute inset-0 opacity-0 hover:opacity-100 transition duration-500 bg-gradient-to-r from-transparent via-gray-100/40 to-transparent"></div>
 
-      {/* Content */}
-      <div className="relative z-10">
-        
-        {/* Title */}
-        <p className="text-xs text-gray-400">{title}</p>
+        {/* Content */}
+        <div className="relative z-10">
+          
+          {/* Title */}
+          <p className="text-xs text-gray-400">{title}</p>
 
-        {/* Value + Change */}
-        <div className="flex items-center justify-between mt-3">
-          <h2 className="text-xl font-semibold text-gray-800">{value}</h2>
+          {/* Value */}
+          <div className="flex items-center justify-between mt-3">
+            <h2 className="text-xl font-semibold text-gray-800">{value}</h2>
 
-          {change && (
-            <div
-              className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full transition-all
-                ${positive 
-                  ? "bg-green-50 text-green-600" 
-                  : "bg-red-50 text-red-500"}`}
-            >
-              {positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-              {change}
-            </div>
-          )}
+            {change && (
+              <div
+                className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full
+                  ${positive 
+                    ? "bg-green-50 text-green-600" 
+                    : "bg-red-50 text-red-500"}`}
+              >
+                {positive ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                {change}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

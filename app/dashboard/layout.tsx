@@ -19,15 +19,11 @@ const navItems = [
   { href: "/dashboard/sites", label: "Sites", icon: MapPin },
   { href: "/dashboard/chargers", label: "Chargers", icon: Zap },
   { href: "/dashboard/revenue", label: "Revenue", icon: IndianRupee },
-  { href: "/dashboard/sessions", label: "Sessions", icon: Activity },
-  { href: "/dashboard/energy", label: "Energy", icon: Battery },
-  { href: "/dashboard/alerts", label: "Alerts", icon: AlertTriangle },
-  { href: "/dashboard/utilization", label: "Utilization", icon: TrendingUp },
+  { href: "/dashboard/fleets", label: "Fleets", icon: Activity },
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
-  { href: "/dashboard/users", label: "Users", icon: Users },
-  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
-  { href: "/dashboard/logs", label: "Logs", icon: FileClock },
+   { href: "/dashboard/updation", label: "Updation", icon: FileClock },
+
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -49,10 +45,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     isAuth ? (
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex min-h-screen bg-gray-100 ">
 
         {/* Sidebar */}
-        <aside className={`fixed top-0 scrollbar-hide left-0 w-60 h-full bg-white border-r border-gray-2.00 shadow-lg
+        <aside className={`fixed top-0 scrollbar-hide left-0 w-60 h-full bg-white border-r border-gray-200 shadow-lg
         overflow-y-auto z-50 transition-transform
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
 
@@ -73,7 +69,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                   key={item.href}
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center justify-between px-4 py-2 rounded-lg text-sm font-medium
+                  className={`flex items-center justify-between px-4 py-2 rounded-lg text-xs font-medium
                   ${isActive
                     ? "bg-gradient-to-r from-blue-500 to-blue-400 text-white"
                     : "text-gray-800 hover:bg-gray-200"

@@ -128,25 +128,189 @@ export const composedData = [
 ];
 
 export const datasimple = [
-  { id: "2026-03-30", name: "Site A", uv: 400 },
-  { id: "2026-03-30", name: "Site B", uv: 300 },
-  { id: "2026-03-30", name: "Site C", uv: 250 },
-  { id: "2026-03-30", name: "Site D", uv: 280 },
-  { id: "2026-03-30", name: "Site E", uv: 190 },
-  { id: "2026-03-30", name: "Site F", uv: 230 },
-  { id: "2026-03-30", name: "Site G", uv: 350 },
-  { id: "2026-03-29", name: "Site A", uv: 380 },
-  { id: "2026-03-29", name: "Site B", uv: 290 },
-  { id: "2026-03-29", name: "Site C", uv: 260 },
-  { id: "2026-03-29", name: "Site D", uv: 300 },
-  { id: "2026-03-29", name: "Site E", uv: 200 },
-  { id: "2026-03-29", name: "Site F", uv: 240 },
-  { id: "2026-03-29", name: "Site G", uv: 340 },
-  { id: "2026-02-28", name: "Site A", uv: 1200 },
-  { id: "2026-02-28", name: "Site B", uv: 900 },
-  { id: "2026-02-28", name: "Site C", uv: 800 },
-  { id: "2026-02-28", name: "Site D", uv: 950 },
-  { id: "2026-02-28", name: "Site E", uv: 700 },
-  { id: "2026-02-28", name: "Site F", uv: 850 },
-  { id: "2026-02-28", name: "Site G", uv: 1100 },
+  // March 31, 2026 - Today
+  { id: "2026-03-31", name: "The Social Stays Dehradun by Reliable Charge", uv: 12450 },
+  { id: "2026-03-31", name: "Sarla Hotel Inn by Reliable Charge", uv: 8760 },
+  { id: "2026-03-31", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 5430 },
+  { id: "2026-03-31", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 3210 },
+  { id: "2026-03-31", name: "MCD Parking Muskan Chowk", uv: 9870 },
+  { id: "2026-03-31", name: "ATS Pristine", uv: 6540 },
+  { id: "2026-03-31", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 4320 },
+  { id: "2026-03-31", name: "ATS Greens Paradiso", uv: 7650 },
+  
+  // March 30, 2026 - Yesterday
+  { id: "2026-03-30", name: "The Social Stays Dehradun by Reliable Charge", uv: 11230 },
+  { id: "2026-03-30", name: "Sarla Hotel Inn by Reliable Charge", uv: 7980 },
+  { id: "2026-03-30", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 4890 },
+  { id: "2026-03-30", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 2980 },
+  { id: "2026-03-30", name: "MCD Parking Muskan Chowk", uv: 8760 },
+  { id: "2026-03-30", name: "ATS Pristine", uv: 5980 },
+  { id: "2026-03-30", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 3980 },
+  { id: "2026-03-30", name: "ATS Greens Paradiso", uv: 6980 },
+  
+  // March 29, 2026
+  { id: "2026-03-29", name: "The Social Stays Dehradun by Reliable Charge", uv: 10980 },
+  { id: "2026-03-29", name: "Sarla Hotel Inn by Reliable Charge", uv: 7650 },
+  { id: "2026-03-29", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 4670 },
+  { id: "2026-03-29", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 2850 },
+  { id: "2026-03-29", name: "MCD Parking Muskan Chowk", uv: 8450 },
+  { id: "2026-03-29", name: "ATS Pristine", uv: 5760 },
+  { id: "2026-03-29", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 3840 },
+  { id: "2026-03-29", name: "ATS Greens Paradiso", uv: 6720 },
+  
+  // March 28, 2026
+  { id: "2026-03-28", name: "The Social Stays Dehradun by Reliable Charge", uv: 11560 },
+  { id: "2026-03-28", name: "Sarla Hotel Inn by Reliable Charge", uv: 8230 },
+  { id: "2026-03-28", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 5120 },
+  { id: "2026-03-28", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 3120 },
+  { id: "2026-03-28", name: "MCD Parking Muskan Chowk", uv: 9120 },
+  { id: "2026-03-28", name: "ATS Pristine", uv: 6230 },
+  { id: "2026-03-28", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 4120 },
+  { id: "2026-03-28", name: "ATS Greens Paradiso", uv: 7230 },
+  
+  // March 27, 2026
+  { id: "2026-03-27", name: "The Social Stays Dehradun by Reliable Charge", uv: 11890 },
+  { id: "2026-03-27", name: "Sarla Hotel Inn by Reliable Charge", uv: 8450 },
+  { id: "2026-03-27", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 5340 },
+  { id: "2026-03-27", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 3290 },
+  { id: "2026-03-27", name: "MCD Parking Muskan Chowk", uv: 9430 },
+  { id: "2026-03-27", name: "ATS Pristine", uv: 6450 },
+  { id: "2026-03-27", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 4260 },
+  { id: "2026-03-27", name: "ATS Greens Paradiso", uv: 7450 },
+  
+  // March 26, 2026
+  { id: "2026-03-26", name: "The Social Stays Dehradun by Reliable Charge", uv: 12230 },
+  { id: "2026-03-26", name: "Sarla Hotel Inn by Reliable Charge", uv: 8670 },
+  { id: "2026-03-26", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 5560 },
+  { id: "2026-03-26", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 3460 },
+  { id: "2026-03-26", name: "MCD Parking Muskan Chowk", uv: 9740 },
+  { id: "2026-03-26", name: "ATS Pristine", uv: 6670 },
+  { id: "2026-03-26", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 4400 },
+  { id: "2026-03-26", name: "ATS Greens Paradiso", uv: 7680 },
+  
+  // March 25, 2026
+  { id: "2026-03-25", name: "The Social Stays Dehradun by Reliable Charge", uv: 10540 },
+  { id: "2026-03-25", name: "Sarla Hotel Inn by Reliable Charge", uv: 7340 },
+  { id: "2026-03-25", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 4450 },
+  { id: "2026-03-25", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 2670 },
+  { id: "2026-03-25", name: "MCD Parking Muskan Chowk", uv: 8120 },
+  { id: "2026-03-25", name: "ATS Pristine", uv: 5430 },
+  { id: "2026-03-25", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 3560 },
+  { id: "2026-03-25", name: "ATS Greens Paradiso", uv: 6340 },
+  
+  // March 24, 2026
+  { id: "2026-03-24", name: "The Social Stays Dehradun by Reliable Charge", uv: 9870 },
+  { id: "2026-03-24", name: "Sarla Hotel Inn by Reliable Charge", uv: 6980 },
+  { id: "2026-03-24", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 4230 },
+  { id: "2026-03-24", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 2540 },
+  { id: "2026-03-24", name: "MCD Parking Muskan Chowk", uv: 7890 },
+  { id: "2026-03-24", name: "ATS Pristine", uv: 5120 },
+  { id: "2026-03-24", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 3340 },
+  { id: "2026-03-24", name: "ATS Greens Paradiso", uv: 5980 },
+  
+  // February 28, 2026 (Last month data)
+  { id: "2026-02-28", name: "The Social Stays Dehradun by Reliable Charge", uv: 28750 },
+  { id: "2026-02-28", name: "Sarla Hotel Inn by Reliable Charge", uv: 19870 },
+  { id: "2026-02-28", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 12450 },
+  { id: "2026-02-28", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 7650 },
+  { id: "2026-02-28", name: "MCD Parking Muskan Chowk", uv: 23450 },
+  { id: "2026-02-28", name: "ATS Pristine", uv: 15430 },
+  { id: "2026-02-28", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 9870 },
+  { id: "2026-02-28", name: "ATS Greens Paradiso", uv: 17650 },
+  
+  // February 27, 2026
+  { id: "2026-02-27", name: "The Social Stays Dehradun by Reliable Charge", uv: 26540 },
+  { id: "2026-02-27", name: "Sarla Hotel Inn by Reliable Charge", uv: 18450 },
+  { id: "2026-02-27", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 11560 },
+  { id: "2026-02-27", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 7120 },
+  { id: "2026-02-27", name: "MCD Parking Muskan Chowk", uv: 21890 },
+  { id: "2026-02-27", name: "ATS Pristine", uv: 14320 },
+  { id: "2026-02-27", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 9150 },
+  { id: "2026-02-27", name: "ATS Greens Paradiso", uv: 16340 },
+  
+  // February 1, 2026 (Earlier month data)
+  { id: "2026-02-01", name: "The Social Stays Dehradun by Reliable Charge", uv: 15430 },
+  { id: "2026-02-01", name: "Sarla Hotel Inn by Reliable Charge", uv: 10870 },
+  { id: "2026-02-01", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 6890 },
+  { id: "2026-02-01", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 4230 },
+  { id: "2026-02-01", name: "MCD Parking Muskan Chowk", uv: 12980 },
+  { id: "2026-02-01", name: "ATS Pristine", uv: 8540 },
+  { id: "2026-02-01", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 5430 },
+  { id: "2026-02-01", name: "ATS Greens Paradiso", uv: 9760 },
+  
+  // January 15, 2026 (6 months ago data)
+  { id: "2026-01-15", name: "The Social Stays Dehradun by Reliable Charge", uv: 12450 },
+  { id: "2026-01-15", name: "Sarla Hotel Inn by Reliable Charge", uv: 8760 },
+  { id: "2026-01-15", name: "Maharaja Agrasen College Vasundhara Enclave by Reliable Charge", uv: 5430 },
+  { id: "2026-01-15", name: "Chacha Nehru Bal Chikitsalaya by Reliable Charge", uv: 3210 },
+  { id: "2026-01-15", name: "MCD Parking Muskan Chowk", uv: 9870 },
+  { id: "2026-01-15", name: "ATS Pristine", uv: 6540 },
+  { id: "2026-01-15", name: "MCD Parking Quarter Dilshad Garden by Reliable Charge", uv: 4320 },
+  { id: "2026-01-15", name: "ATS Greens Paradiso", uv: 7650 },
+];
+
+export const chargerData2 = [
+  // Station A - 12 Chargers (Mix of AC and DC)
+  { name: 'Alpha Charger-1', type: 'ac', value: 78.0, location: 'Station A' },
+  { name: 'Alpha Charger-2', type: 'ac', value: 81.0, location: 'Station A' },
+  { name: 'Alpha Charger-3', type: 'dc', value: 84.2, location: 'Station A' },
+  { name: 'Alpha Charger-4', type: 'ac', value: 83.4, location: 'Station A' },
+  { name: 'Alpha Charger-5', type: 'dc', value: 78.8, location: 'Station A' },
+  { name: 'Alpha Charger-6', type: 'ac', value: 85.1, location: 'Station A' },
+  { name: 'Alpha Charger-7', type: 'dc', value: 82.1, location: 'Station A' },
+  { name: 'Alpha Charger-8', type: 'ac', value: 79.1, location: 'Station A' },
+  { name: 'Alpha Charger-9', type: 'dc', value: 79.0, location: 'Station A' },
+  { name: 'Alpha Charger-10', type: 'ac', value: 84.0, location: 'Station A' },
+  { name: 'Alpha Charger-11', type: 'dc', value: 79.2, location: 'Station A' },
+  { name: 'Alpha Charger-12', type: 'ac', value: 83.1, location: 'Station A' },
+
+  // Station B - 8 Chargers
+  { name: 'Beta Charger-1', type: 'dc', value: 79.0, location: 'Station B' },
+  { name: 'Beta Charger-2', type: 'ac', value: 84.3, location: 'Station B' },
+  { name: 'Beta Charger-3', type: 'dc', value: 80.5, location: 'Station B' },
+  { name: 'Beta Charger-4', type: 'ac', value: 81.3, location: 'Station B' },
+  { name: 'Beta Charger-5', type: 'dc', value: 79.7, location: 'Station B' },
+  { name: 'Beta Charger-6', type: 'ac', value: 81.1, location: 'Station B' },
+  { name: 'Beta Charger-7', type: 'dc', value: 81.1, location: 'Station B' },
+  { name: 'Beta Charger-8', type: 'ac', value: 79.1, location: 'Station B' },
+
+  // Station C - 4 Chargers
+  { name: 'Gamma Charger-1', type: 'ac', value: 82.5, location: 'Station C' },
+  { name: 'Gamma Charger-2', type: 'dc', value: 83.1, location: 'Station C' },
+  { name: 'Gamma Charger-3', type: 'ac', value: 79.5, location: 'Station C' },
+  { name: 'Gamma Charger-4', type: 'dc', value: 81.7, location: 'Station C' },
+
+  // Station D - 4 Chargers
+  { name: 'Delta Charger-1', type: 'ac', value: 81.0, location: 'Station D' },
+  { name: 'Delta Charger-2', type: 'dc', value: 81.0, location: 'Station D' },
+  { name: 'Delta Charger-3', type: 'ac', value: 83.0, location: 'Station D' },
+  { name: 'Delta Charger-4', type: 'dc', value: 83.3, location: 'Station D' },
+
+  // Station E - 2 Chargers
+  { name: 'Epsilon Charger-1', type: 'ac', value: 80.7, location: 'Station E' },
+  { name: 'Epsilon Charger-2', type: 'dc', value: 82.4, location: 'Station E' },
+
+  // Station F - 2 Chargers
+  { name: 'Zeta Charger-1', type: 'ac', value: 80.3, location: 'Station F' },
+  { name: 'Zeta Charger-2', type: 'dc', value: 81.5, location: 'Station F' },
+
+  // Station G - 6 Chargers
+  { name: 'Eta Charger-1', type: 'ac', value: 78.5, location: 'Station G' },
+  { name: 'Eta Charger-2', type: 'dc', value: 82.9, location: 'Station G' },
+  { name: 'Eta Charger-3', type: 'ac', value: 80.1, location: 'Station G' },
+  { name: 'Eta Charger-4', type: 'dc', value: 79.8, location: 'Station G' },
+  { name: 'Eta Charger-5', type: 'ac', value: 83.7, location: 'Station G' },
+  { name: 'Eta Charger-6', type: 'dc', value: 81.2, location: 'Station G' },
+
+  // Station H - 3 Chargers
+  { name: 'Theta Charger-1', type: 'ac', value: 80.4, location: 'Station H' },
+  { name: 'Theta Charger-2', type: 'dc', value: 79.3, location: 'Station H' },
+  { name: 'Theta Charger-3', type: 'ac', value: 82.8, location: 'Station H' },
+
+  // Station I - 5 Chargers
+  { name: 'Iota Charger-1', type: 'dc', value: 81.6, location: 'Station I' },
+  { name: 'Iota Charger-2', type: 'ac', value: 78.9, location: 'Station I' },
+  { name: 'Iota Charger-3', type: 'dc', value: 83.2, location: 'Station I' },
+  { name: 'Iota Charger-4', type: 'ac', value: 80.0, location: 'Station I' },
+  { name: 'Iota Charger-5', type: 'dc', value: 79.4, location: 'Station I' },
 ];
