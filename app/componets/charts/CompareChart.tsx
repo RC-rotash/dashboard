@@ -61,7 +61,7 @@ interface ChargerData {
 }
 
 interface ChargerBarChartProps {
-  data?: ChargerData[];
+  data?: any[];
   title?: string;
   height?: number;
   unit?: string;

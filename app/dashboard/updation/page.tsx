@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { useApi } from "@/app/componets/api/apiService";
@@ -7,11 +5,13 @@ import { useState, useEffect, useMemo } from "react";
 
 interface Charger {
   id: string;
+  chargerId: string;
   name: string;
-  property_id: string;
-  power_output: string;
+  property_id?: string;
+  power_output?: string;
   group?: string;
   installDate?: string;
+  createdAt?: string;
 }
 
 export default function ChargerUpdation() {
@@ -26,7 +26,7 @@ export default function ChargerUpdation() {
   
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
-  const [assignmentFilter, setAssignmentFilter] = useState<"all" | "assigned" | "unassigned">("all");
+  const [assignmentFilter, setAssignmentFilter] = useState<"all" | "listed" | "unlisted">("all");
   
   // Form states
   const [selectedGroup, setSelectedGroup] = useState("");
@@ -41,17 +41,37 @@ export default function ChargerUpdation() {
     { id: "group-4", value: "RWA", label: "RWA", color: "bg-orange-100 text-orange-800" }
   ];
 
-  // Fetch charger list
+  // Fetch charger list from GET /public/charger-list
   const fetchChargers = async () => {
     try {
       setLoading(true);
       const response = await get<any>("/public/charger-list");
       console.log("Charger list response:", response);
-      const data = response?.data || [];
-      setChargers(data);
+      
+      // Extract data from response
+      let data = response?.data || response || [];
+      
+      // Ensure data is an array
+      if (!Array.isArray(data)) {
+        data = [];
+      }
+      
+      // Process chargers from /public/charger-list API
+      const processedChargers = data.map((charger: any, index: number) => ({
+        id: charger.id || charger.chargerId || `charger-${index}`,
+        chargerId: charger.chargerId || charger.id,
+        name: charger.name || charger.chargerName || `Charger ${charger.chargerId || index}`,
+        property_id: charger.property_id,
+        power_output: charger.power_output || charger.powerType || charger.power || "AC",
+        group: charger.group || undefined,  // This will come from the API if already assigned
+        installDate: charger.installDate || charger.installedDate,
+        createdAt: charger.createdAt
+      }));
+      
+      setChargers(processedChargers);
       setError(null);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching chargers:", err);
       setError("Failed to fetch charger list");
     } finally {
       setLoading(false);
@@ -66,20 +86,24 @@ export default function ChargerUpdation() {
   const filteredChargers = useMemo(() => {
     let filtered = [...chargers];
     
-    // Apply assignment filter
-    if (assignmentFilter === "assigned") {
-      filtered = filtered.filter(c => c.group);
-    } else if (assignmentFilter === "unassigned") {
-      filtered = filtered.filter(c => !c.group);
+    // Apply listed/unlisted filter
+    if (assignmentFilter === "listed") {
+      // Show only chargers that have a group assigned
+      filtered = filtered.filter(c => c.group && c.group.trim() !== "");
+    } else if (assignmentFilter === "unlisted") {
+      // Show only chargers that DON'T have a group assigned
+      filtered = filtered.filter(c => !c.group || c.group.trim() === "");
     }
+    // "all" shows both listed and unlisted
     
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(c => 
-        c.name.toLowerCase().includes(query) ||
-        c.id.toLowerCase().includes(query) ||
-        c.power_output.toLowerCase().includes(query)
+        c.name?.toLowerCase().includes(query) ||
+        c.chargerId?.toLowerCase().includes(query) ||
+        c.id?.toLowerCase().includes(query) ||
+        c.power_output?.toLowerCase().includes(query)
       );
     }
     
@@ -94,7 +118,7 @@ export default function ChargerUpdation() {
     setShowModal(true);
   };
 
-  // Handle update submission
+  // Handle update submission - POST to /admin/attach-group
   const handleUpdateSubmit = async () => {
     if (!selectedCharger) {
       setError("No charger selected");
@@ -116,25 +140,35 @@ export default function ChargerUpdation() {
       setError(null);
       setSuccess(null);
       
+      // Prepare payload as per API requirement
       const payload = {
-        chargerId: selectedCharger.id,
+        chargerId: selectedCharger.chargerId || selectedCharger.id,
         installDate: installDate,
         group: selectedGroup
       };
       
-      console.log("Sending payload to /admin/attach-charger:", payload);
+      console.log("Sending payload to /admin/attach-group:", payload);
       
-      const response = await post<any>("/admin/group-list", payload);
+      // POST request to attach group
+      const response = await post<any>("/admin/attach-group", payload);
       
       console.log("Update response:", response);
       
-      if (response?.status === 200 || response?.status === 201) {
-        setSuccess(`Charger "${selectedCharger.name}" updated successfully!`);
+      // Check for successful response (status 200 or 201)
+      if (response?.status === 200 || response?.status === 201 || response?.data) {
+        const responseData = response?.data || response;
         
-        // Update local state
+        setSuccess(responseData?.message || `Charger attached successfully!`);
+        
+        // Update local state with the new data
         setChargers(prev => prev.map(c => 
-          c.id === selectedCharger.id 
-            ? { ...c, group: selectedGroup, installDate: installDate }
+          (c.chargerId === selectedCharger.chargerId || c.id === selectedCharger.id)
+            ? { 
+                ...c, 
+                group: selectedGroup, 
+                installDate: installDate,
+                createdAt: responseData?.data?.createdAt || c.createdAt
+              }
             : c
         ));
         
@@ -151,7 +185,9 @@ export default function ChargerUpdation() {
       }
     } catch (err: any) {
       console.error("Update error:", err);
-      const errorMessage = err?.response?.data?.message || err?.message || "Failed to update charger. Please try again.";
+      const errorMessage = err?.response?.data?.message || 
+                          err?.message || 
+                          "Failed to update charger. Please try again.";
       setError(errorMessage);
     } finally {
       setUpdating(false);
@@ -206,28 +242,28 @@ export default function ChargerUpdation() {
               <h1 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
                 Charger Management
               </h1>
-              <p className=" text-xs text-gray-500">Update charger groups and installation dates</p>
+              <p className="text-xs text-gray-500">Update charger groups and installation dates</p>
             </div>
           </div>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-          <div key="stat-total" className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4">
             <p className="text-xs text-blue-600 font-medium">Total Chargers</p>
-            <p className="text-2xl font-bold text-black-800">{chargers.length}</p>
+            <p className="text-2xl font-bold text-gray-800">{chargers.length}</p>
           </div>
-          <div key="stat-assigned" className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4">
-            <p className="text-xs text-gray-400 font-medium">Assigned</p>
-            <p className="text-2xl font-bold text-black-800">{chargers.filter(c => c.group).length}</p>
+          <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4">
+            <p className="text-xs text-green-600 font-medium">Listed (Assigned)</p>
+            <p className="text-2xl font-bold text-gray-800">{chargers.filter(c => c.group && c.group.trim() !== "").length}</p>
           </div>
-          <div key="stat-unassigned" className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl p-4">
-            <p className="text-xs text-gray-400 font-medium">Unassigned</p>
-            <p className="text-2xl font-bold text-black-800">{chargers.filter(c => !c.group).length}</p>
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl p-4">
+            <p className="text-xs text-orange-600 font-medium">Unlisted (Unassigned)</p>
+            <p className="text-2xl font-bold text-gray-800">{chargers.filter(c => !c.group || c.group.trim() === "").length}</p>
           </div>
-          <div key="stat-groups" className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-4">
-            <p className="text-xs text-gray-400 font-medium">Groups Available</p>
-            <p className="text-2xl font-bold text-black-800">{groupOptions.length}</p>
+          <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-4">
+            <p className="text-xs text-purple-600 font-medium">Groups Available</p>
+            <p className="text-2xl font-bold text-gray-800">{groupOptions.length}</p>
           </div>
         </div>
 
@@ -246,7 +282,7 @@ export default function ChargerUpdation() {
                   placeholder="Search by name, ID, or power output..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2  text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0094FE] focus:border-transparent"
+                  className="w-full pl-10 pr-10 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0094FE] focus:border-transparent"
                 />
                 {searchQuery && (
                   <button
@@ -261,39 +297,39 @@ export default function ChargerUpdation() {
               </div>
             </div>
 
-            {/* Assignment Filter Buttons */}
+            {/* Listed/Unlisted Filter Buttons */}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">Filter by Status</label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setAssignmentFilter("all")}
-                  className={`px-4 py-2 rounded-lg  text-xs font-medium transition-all ${
+                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
                     assignmentFilter === "all"
                       ? "bg-gradient-to-r from-[#0094FE] to-blue-600 text-white shadow-md"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
-                  All
+                  All Chargers
                 </button>
                 <button
-                  onClick={() => setAssignmentFilter("assigned")}
-                  className={`px-4 py-2 rounded-lg  text-xs font-medium transition-all ${
-                    assignmentFilter === "assigned"
+                  onClick={() => setAssignmentFilter("listed")}
+                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+                    assignmentFilter === "listed"
                       ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
-                  Assigned
+                  Listed (Assigned)
                 </button>
                 <button
-                  onClick={() => setAssignmentFilter("unassigned")}
-                  className={`px-4 py-2 rounded-lg  text-xs font-medium transition-all ${
-                    assignmentFilter === "unassigned"
+                  onClick={() => setAssignmentFilter("unlisted")}
+                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+                    assignmentFilter === "unlisted"
                       ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
-                  Unassigned
+                  Unlisted (Unassigned)
                 </button>
               </div>
             </div>
@@ -307,7 +343,13 @@ export default function ChargerUpdation() {
               <svg className="w-5 h-5 text-[#0094FE]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
               </svg>
-              <h2 className="text-lg font-semibold text-gray-800">Charger List</h2>
+              <h2 className="text-lg font-semibold text-gray-800">
+                {assignmentFilter === "listed" 
+                  ? "Listed Chargers (Assigned)" 
+                  : assignmentFilter === "unlisted" 
+                  ? "Unlisted Chargers (Unassigned)"
+                  : "All Chargers"}
+              </h2>
             </div>
           </div>
           
@@ -337,7 +379,7 @@ export default function ChargerUpdation() {
                         <span className="text-xs font-medium text-gray-800">{charger.name}</span>
                       </td>
                       <td className="px-6 py-3">
-                        <span className="text-xs font-mono text-gray-500">{charger.id}</span>
+                        <span className="text-xs font-mono text-gray-500">{charger.chargerId || charger.id}</span>
                       </td>
                       <td className="px-6 py-3">
                         <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
@@ -355,15 +397,15 @@ export default function ChargerUpdation() {
                           </span>
                         ) : (
                           <span className="inline-flex px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
-                            Unassigned
+                            Unlisted
                           </span>
                         )}
-                      </td>
+                       </td>
                       <td className="px-6 py-3">
                         <span className="text-xs text-gray-500">
                           {charger.installDate || "Not set"}
                         </span>
-                      </td>
+                       </td>
                       <td className="px-6 py-3">
                         <button
                           onClick={() => handleUpdateClick(charger)}
@@ -374,8 +416,8 @@ export default function ChargerUpdation() {
                           </svg>
                           Update
                         </button>
-                      </td>
-                    </tr>
+                       </td>
+                     </tr>
                   ))
                 )}
               </tbody>
@@ -414,7 +456,9 @@ export default function ChargerUpdation() {
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-xs text-gray-500 mb-1">Charger</p>
                 <p className="text-xs font-medium text-gray-800">{selectedCharger.name}</p>
-                <p className="text-xs font-mono text-gray-400 mt-1">ID: {selectedCharger.id}</p>
+                <p className="text-xs font-mono text-gray-400 mt-1">
+                  ID: {selectedCharger.chargerId || selectedCharger.id}
+                </p>
                 <p className="text-xs text-gray-500 mt-1">Power: {selectedCharger.power_output}</p>
               </div>
 

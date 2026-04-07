@@ -175,7 +175,7 @@ const SimpleBarChart = ({ data, title, height = 400 }: Props) => {
   };
 
   // YAxis props
-  const getYAxisProps = () => {
+  const getYAxisProps :any = () => {
     return {
       tick: { fontSize: isMobile ? 10 : 12, fill: "#6b7280" },
       tickFormatter: formatYAxis,
