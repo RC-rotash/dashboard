@@ -179,7 +179,7 @@ const SimpleBarChart = ({ data, title, height = 400 }: Props) => {
     return {
       tick: { fontSize: isMobile ? 10 : 12, fill: "#6b7280" },
       tickFormatter: formatYAxis,
-      width: 20,
+      width: 30,
       axisLine: false,
       tickLine: false,
     };
@@ -204,16 +204,17 @@ const SimpleBarChart = ({ data, title, height = 400 }: Props) => {
                 {formatCurrency(revenueValue)}
               </span>
             </div>
-            {percentage > 0 && percentage < 100 && (
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">Share:</span>
-                <span className="text-xs text-gray-700">{percentage.toFixed(1)}%</span>
-              </div>
-            )}
+           
             {d.totalUnits !== undefined && d.totalUnits > 0 && (
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500">Units:</span>
-                <span className="text-xs text-gray-700">{d.totalUnits.toLocaleString()} kWh</span>
+              <span className="text-xs text-gray-700">
+  {(d.totalUnits / 1000).toLocaleString("en-IN", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })}{" "}
+  kWh
+</span>
               </div>
             )}
             {d.totalSessions !== undefined && d.totalSessions > 0 && (

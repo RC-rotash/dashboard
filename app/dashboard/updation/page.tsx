@@ -1,6 +1,9 @@
+
+
 "use client";
 
 import { useApi } from "@/app/componets/api/apiService";
+import DashboardHeader from "@/app/componets/DashboardHeader";
 import { useState, useEffect, useMemo } from "react";
 
 interface Charger {
@@ -12,6 +15,14 @@ interface Charger {
   group?: string;
   installDate?: string;
   createdAt?: string;
+}
+
+interface GroupAssignment {
+  id: string;
+  chargerId: string;
+  installDate: string;
+  group: string;
+  createdAt: string;
 }
 
 export default function ChargerUpdation() {
@@ -41,37 +52,60 @@ export default function ChargerUpdation() {
     { id: "group-4", value: "RWA", label: "RWA", color: "bg-orange-100 text-orange-800" }
   ];
 
-  // Fetch charger list from GET /public/charger-list
-  const fetchChargers = async () => {
+  // Fetch both charger list and group list
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await get<any>("/public/charger-list");
-      console.log("Charger list response:", response);
       
-      // Extract data from response
-      let data = response?.data || response || [];
+      // Fetch all chargers
+      const chargerResponse = await get<any>("/public/charger-list");
+      console.log("Charger list response:", chargerResponse);
       
-      // Ensure data is an array
-      if (!Array.isArray(data)) {
-        data = [];
+      // Fetch group assignments (listed chargers)
+      const groupResponse = await post<any>("/admin/group-list");
+      console.log("Group list response:", groupResponse);
+      
+      // Extract charger data
+      let chargerData = chargerResponse?.data || chargerResponse || [];
+      if (!Array.isArray(chargerData)) {
+        chargerData = [];
       }
       
-      // Process chargers from /public/charger-list API
-      const processedChargers = data.map((charger: any, index: number) => ({
-        id: charger.id || charger.chargerId || `charger-${index}`,
-        chargerId: charger.chargerId || charger.id,
-        name: charger.name || charger.chargerName || `Charger ${charger.chargerId || index}`,
-        property_id: charger.property_id,
-        power_output: charger.power_output || charger.powerType || charger.power || "AC",
-        group: charger.group || undefined,  // This will come from the API if already assigned
-        installDate: charger.installDate || charger.installedDate,
-        createdAt: charger.createdAt
-      }));
+      // Extract group data (listed chargers)
+      let groupData = groupResponse?.data || groupResponse || [];
+      if (!Array.isArray(groupData)) {
+        groupData = [];
+      }
+      
+      // Create a map of chargerId -> group assignment
+      const groupMap = new Map<string, GroupAssignment>();
+      groupData.forEach((group: GroupAssignment) => {
+        if (group.chargerId) {
+          groupMap.set(group.chargerId, group);
+        }
+      });
+      
+      // Process chargers and merge with group info
+      const processedChargers = chargerData.map((charger: any, index: number) => {
+        const chargerId = charger.chargerId || charger.id;
+        const groupAssignment = groupMap.get(chargerId);
+        
+        return {
+          id: charger.id || chargerId || `charger-${index}`,
+          chargerId: chargerId,
+          name: charger.name || charger.chargerName || `Charger ${chargerId || index}`,
+          property_id: charger.property_id,
+          power_output: charger.power_output || charger.powerType || charger.power || "AC",
+          group: groupAssignment?.group || undefined,
+          installDate: groupAssignment?.installDate || charger.installDate || charger.installedDate,
+          createdAt: groupAssignment?.createdAt || charger.createdAt
+        };
+      });
       
       setChargers(processedChargers);
       setError(null);
     } catch (err) {
-      console.error("Error fetching chargers:", err);
+      console.error("Error fetching data:", err);
       setError("Failed to fetch charger list");
     } finally {
       setLoading(false);
@@ -79,7 +113,7 @@ export default function ChargerUpdation() {
   };
 
   useEffect(() => {
-    fetchChargers();
+    fetchData();
   }, []);
 
   // Filter chargers based on search and assignment filter
@@ -88,10 +122,10 @@ export default function ChargerUpdation() {
     
     // Apply listed/unlisted filter
     if (assignmentFilter === "listed") {
-      // Show only chargers that have a group assigned
+      // Show only chargers that have a group assigned (appear in group-list)
       filtered = filtered.filter(c => c.group && c.group.trim() !== "");
     } else if (assignmentFilter === "unlisted") {
-      // Show only chargers that DON'T have a group assigned
+      // Show only chargers that DON'T have a group assigned (not in group-list)
       filtered = filtered.filter(c => !c.group || c.group.trim() === "");
     }
     // "all" shows both listed and unlisted
@@ -154,7 +188,7 @@ export default function ChargerUpdation() {
       
       console.log("Update response:", response);
       
-      // Check for successful response (status 200 or 201)
+      // Check for successful response
       if (response?.status === 200 || response?.status === 201 || response?.data) {
         const responseData = response?.data || response;
         
@@ -179,6 +213,8 @@ export default function ChargerUpdation() {
           setSelectedGroup("");
           setInstallDate("");
           setSuccess(null);
+          // Refresh data to sync with server
+          fetchData();
         }, 1500);
       } else {
         setError(response?.message || "Failed to update charger");
@@ -229,41 +265,31 @@ export default function ChargerUpdation() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white p-6 mt-16">
+
+      <DashboardHeader
+        subtitle={'Update charger groups and installation dates'}
+        title={`Charger Management`}
+      />
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-gradient-to-br from-[#0094FE] to-blue-600 rounded-xl shadow-lg">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                Charger Management
-              </h1>
-              <p className="text-xs text-gray-500">Update charger groups and installation dates</p>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
           <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4">
-            <p className="text-xs text-blue-600 font-medium">Total Chargers</p>
-            <p className="text-2xl font-bold text-gray-800">{chargers.length}</p>
+            <p className="text-xs text-gray-400 font-medium">Total Chargers</p>
+            <p className="text-2xl font-bold text-black-800">{chargers.length}</p>
           </div>
           <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4">
-            <p className="text-xs text-green-600 font-medium">Listed (Assigned)</p>
-            <p className="text-2xl font-bold text-gray-800">{chargers.filter(c => c.group && c.group.trim() !== "").length}</p>
+            <p className="text-xs text-gray-400  font-medium">Listed (Assigned)</p>
+            <p className="text-2xl font-bold text-black-800">{chargers.filter(c => c.group && c.group.trim() !== "").length}</p>
           </div>
           <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl p-4">
-            <p className="text-xs text-orange-600 font-medium">Unlisted (Unassigned)</p>
-            <p className="text-2xl font-bold text-gray-800">{chargers.filter(c => !c.group || c.group.trim() === "").length}</p>
+            <p className="text-xs text-gray-400  font-medium">Unlisted (Unassigned)</p>
+            <p className="text-2xl font-bold text-black-800">{chargers.filter(c => !c.group || c.group.trim() === "").length}</p>
           </div>
           <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-4">
-            <p className="text-xs text-purple-600 font-medium">Groups Available</p>
-            <p className="text-2xl font-bold text-gray-800">{groupOptions.length}</p>
+            <p className="text-xs text-gray-400  font-medium">Groups Available</p>
+            <p className="text-2xl font-bold text-black-800">{groupOptions.length}</p>
           </div>
         </div>
 
@@ -319,7 +345,7 @@ export default function ChargerUpdation() {
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
-                  Listed (Assigned)
+                  Listed
                 </button>
                 <button
                   onClick={() => setAssignmentFilter("unlisted")}
@@ -329,7 +355,7 @@ export default function ChargerUpdation() {
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                   }`}
                 >
-                  Unlisted (Unassigned)
+                  Unlisted
                 </button>
               </div>
             </div>
@@ -345,10 +371,10 @@ export default function ChargerUpdation() {
               </svg>
               <h2 className="text-lg font-semibold text-gray-800">
                 {assignmentFilter === "listed" 
-                  ? "Listed Chargers (Assigned)" 
+                  ? `Listed Chargers` 
                   : assignmentFilter === "unlisted" 
-                  ? "Unlisted Chargers (Unassigned)"
-                  : "All Chargers"}
+                  ? `Unlisted Chargers`
+                  : `All Chargers`}
               </h2>
             </div>
           </div>
@@ -389,8 +415,8 @@ export default function ChargerUpdation() {
                         }`}>
                           {charger.power_output}
                         </span>
-                      </td>
-                      <td className="px-6 py-3">
+                       </td>
+                      <td className="px-1 py-3">
                         {charger.group ? (
                           <span className={`inline-flex px-2 py-1 rounded-full text-xs ${getGroupBadge(charger.group)}`}>
                             {groupOptions.find(g => g.value === charger.group)?.label || charger.group}

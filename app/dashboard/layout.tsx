@@ -14,15 +14,16 @@ import DashboardHeader from "../componets/DashboardHeader";
 import LogoutPage from "../componets/LogoutPage";
 
 const navItems = [
-  { href: "/dashboard", label: "Home", icon: Home },
-  { href: "/dashboard/overview", label: "Overview", icon: BarChart3 },
-  { href: "/dashboard/sites", label: "Sites", icon: MapPin },
-  { href: "/dashboard/chargers", label: "Chargers", icon: Zap },
-  { href: "/dashboard/revenue", label: "Revenue", icon: IndianRupee },
+  { href: "/dashboard", label: "Overview", icon: Home },
+   { href: "/dashboard/sites", label: "Sites", icon: MapPin },
+     { href: "/dashboard/reports", label: "Reports", icon: FileText },
+      { href: "/dashboard/updation", label: "Charger Group", icon: FileClock },
+      //  { href: "/dashboard/chargers", label: "Chargers", icon: Zap },
+        // { href: "/dashboard/revenue", label: "Revenue", icon: IndianRupee },
+  { href: "/dashboard/fleetAttach", label: "Fleet Attach", icon: BarChart3 },
   { href: "/dashboard/fleets", label: "Fleets", icon: Activity },
-  { href: "/dashboard/reports", label: "Reports", icon: FileText },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
-   { href: "/dashboard/updation", label: "Updation", icon: FileClock },
+  // { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  
 
 ];
 
@@ -95,7 +96,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <Menu size={20} />
         </button>
 
-        <DashboardHeader />
+      
 
         {/* Main */}
         <main className="flex-1 lg:ml-60">

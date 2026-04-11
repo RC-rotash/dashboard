@@ -13,7 +13,7 @@ import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-export default function DashboardHeader() {
+export default function DashboardHeader({title,subtitle}:any) {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -30,10 +30,10 @@ export default function DashboardHeader() {
 
   // User details (in real app, fetch from context/state)
   const userDetails = {
-    name: "Abhishek Sharma",
-    email: "abhishek@reliablecharge.com",
+    name: "Reliable Charge",
+    email: "reliablecharge@gmail.com",
     role: "Admin",
-    board: "CPO Dashboard",
+    board: "Dashboard",
     avatar: "/Images/profile.jpg"
   };
 
@@ -77,10 +77,10 @@ export default function DashboardHeader() {
         
         <div>
           <h1 className="text-base font-semibold text-gray-800">
-            Analytics
+            {title}
           </h1>
           <p className="text-xs text-gray-500 hidden sm:block">
-           EV Charger Network Management Dashboard
+          {subtitle}
           </p>
         </div>
       </div>
@@ -121,18 +121,18 @@ export default function DashboardHeader() {
                 <p className="text-xs text-blue-600 mt-1">{userDetails.board}</p>
               </div>
               
-              <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+              {/* <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                 <User size={16} className="text-gray-500" />
                 Profile
-              </button>
+              </button> */}
 
-              <button 
+              {/* <button 
                 onClick={() => router.push("/dashboard/settings")}
                 className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <Settings size={16} className="text-gray-500" />
                 Settings
-              </button>
+              </button> */}
 
               <hr className="my-1" />
 

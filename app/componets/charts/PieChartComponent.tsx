@@ -52,17 +52,26 @@ export default function PieChartComponent({
     "#818cf8", // indigo-light
   ];
 
-  // Label inside the pie slice
+  // Calculate total for exact percentage
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
+  // Label inside the pie slice - shows exact percentage with 1 decimal
   const renderCustomizedLabel = ({
     cx,
     cy,
     midAngle,
     innerRadius,
     outerRadius,
-    percent,
+    payload,
   }: any) => {
     if (cx == null || cy == null || innerRadius == null || outerRadius == null) return null;
-    if (percent < 0.05) return null; // Don't show label for very small slices
+    
+    // Calculate exact percentage from actual value
+    const exactPercent = (payload.value / total) * 100;
+    
+    // Don't show label for slices less than 5%
+    if (exactPercent < 5) return null;
+    
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
     const y = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
@@ -77,28 +86,24 @@ export default function PieChartComponent({
         fontSize={10}
         fontWeight={600}
       >
-        {`${(percent * 100).toFixed(0)}%`}
+        {`${exactPercent.toFixed(1)}%`}
       </text>
     );
   };
 
-  // Custom Tooltip
+  // Custom Tooltip - shows exact percentage with 1 decimal
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const dataItem = payload[0].payload;
-      const total = data.reduce((sum, item) => sum + item.value, 0);
-      const percentage = ((dataItem.value / total) * 100).toFixed(1);
+      const exactPercentage = (dataItem.value / total) * 100;
       
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg max-w-xs">
           <p className="text-xs font-semibold text-gray-800 mb-1 break-words">
             {dataItem.fullName || dataItem.name}
           </p>
-          <p className="text-xs text-[#0094FE] font-bold">
-            Value: {dataItem.value.toFixed(2)}%
-          </p>
-          <p className="text-xs text-gray-500">
-            Percentage: {percentage}%
+          <p className="text-xs text-[#0094FE]">
+            Percentage: {exactPercentage.toFixed(1)}%
           </p>
         </div>
       );
@@ -106,14 +111,12 @@ export default function PieChartComponent({
     return null;
   };
 
-  // Custom Legend
+  // Custom Legend - shows exact percentage with 1 decimal
   const CustomLegend = ({ payload }: any) => {
-    const total = data.reduce((sum, item) => sum + item.value, 0);
-    
     return (
       <div className="mt-4 max-h-[200px] overflow-y-auto">
         {payload.map((entry: any, index: number) => {
-          const percentage = ((entry.payload.value / total) * 100).toFixed(1);
+          const exactPercentage = (entry.payload.value / total) * 100;
           return (
             <div key={`legend-${index}`} className="flex items-center justify-between gap-2 mb-1 text-xs">
               <div className="flex items-center gap-1 flex-1 min-w-0">
@@ -125,7 +128,7 @@ export default function PieChartComponent({
                   {entry.value}
                 </span>
               </div>
-              <span className="text-gray-500 flex-shrink-0">{percentage}%</span>
+              <span className="text-gray-500 flex-shrink-0">{exactPercentage.toFixed(1)}%</span>
             </div>
           );
         })}
@@ -167,7 +170,7 @@ export default function PieChartComponent({
             </PieChart>
           </ResponsiveContainer>
           <div className="mt-2 text-xs text-gray-400 text-center">
-            Total items: {data.length} | Hover over slices for details
+            Total: {total.toFixed(1)}% | {data.length} items
           </div>
         </>
       ) : (

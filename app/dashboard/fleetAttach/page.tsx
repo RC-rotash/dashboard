@@ -1120,13 +1120,13 @@ export default function Fleets() {
             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
             Refresh
           </button>
-          {/* <button
+          <button
             onClick={() => setShowAddFleetModal(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-[#0094FE] to-blue-600 text-white rounded-lg hover:shadow-lg hover:scale-[1.02] transition-all duration-200 text-[11px] font-medium"
           >
             <Plus className="w-3.5 h-3.5" />
             Add Fleet
-          </button> */}
+          </button>
         </div>
       </div>
       
@@ -1150,23 +1150,6 @@ export default function Fleets() {
             <StatCard title="Total Duration" value={formatDuration(totalDuration)} variant="purple" />
           </div>
 
-          {/* Chart Section - Shows ALL fleets including zero revenue */}
-          <div className="bg-white p-4 rounded-xl shadow-lg">
-            {filteredChartData.length > 0 ? (
-              <SimpleBarChart 
-                data={filteredChartData}
-                title={`Showing total fleets`}
-                height={400}
-              />
-            ) : (
-              <div className="text-center py-10 text-gray-400">
-                <Users className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                <p className="text-sm">No fleets found matching your search</p>
-              </div>
-            )}
-          </div>
-
-
           {/* Fleets Table with Expandable Users */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-lg overflow-hidden">
             <div className="overflow-x-auto">
@@ -1189,7 +1172,7 @@ export default function Fleets() {
                     <th className="text-left px-4 py-3 text-xs font-semibold text-gray-600">Units (kWh)</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-gray-600">Duration</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-gray-600">Transactions</th>
-                    
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-gray-600">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -1198,7 +1181,14 @@ export default function Fleets() {
                       <td colSpan={9} className="text-center py-10 text-gray-400">
                         <Users className="w-8 h-8 mx-auto mb-2 text-gray-300" />
                         <p className="text-xs">No fleets found{fleetNameFilter ? ` matching "${fleetNameFilter}"` : " created yet"}</p>
-                       
+                        {!fleetNameFilter && (
+                          <button
+                            onClick={() => setShowAddFleetModal(true)}
+                            className="mt-2 text-[#0094FE] text-[11px] hover:underline"
+                          >
+                            Create your first fleet
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ) : (
@@ -1259,7 +1249,19 @@ export default function Fleets() {
                               {fleetStats?.totalSessions || 0}
                             </span>
                            </td>
-                         
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => {
+                                setSelectedFleetId(fleet.id);
+                                setShowAddUserModal(true);
+                              }}
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:shadow-md transition-all text-[11px] font-medium"
+                              title="Add User"
+                            >
+                              <UserPlus className="w-3.5 h-3.5" />
+                              Add
+                            </button>
+                           </td>
                          </tr>
                       );
                       

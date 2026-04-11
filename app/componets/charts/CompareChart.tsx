@@ -28,6 +28,7 @@ import {
   Battery,
   Filter
 } from 'lucide-react';
+import DashboardHeader from '../DashboardHeader';
 
 // Simple light colors
 const AC_COLOR = '#60a5fa'; // Light blue
@@ -218,16 +219,15 @@ export default function ChargerBarChart({
 
   return (
     <div className="w-full bg-white rounded-xl border border-gray-100 overflow-hidden">
+       <DashboardHeader
+              subtitle={`  ${statistics.totalChargers} chargers • ${statistics.totalStations} stations`}
+              title={title}
+            />
       <div className="p-5">
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-          <div>
-            <h3 className="text-base font-semibold text-gray-800">{title}</h3>
-            <p className="text-xs text-gray-400 mt-0.5">
-              {statistics.totalChargers} chargers • {statistics.totalStations} stations
-            </p>
-          </div>
-          
+         
+          <div></div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsTableView(!isTableView)}

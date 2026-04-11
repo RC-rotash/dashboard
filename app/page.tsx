@@ -12,22 +12,36 @@ export default function DashboardLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+const [loginError, setLoginError] = useState("");
+ const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email && password) {
-      setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        localStorage.setItem("isAuth", "true");
-        if (rememberMe) {
-          localStorage.setItem("rememberedEmail", email);
-        }
-        router.push("/dashboard");
-        setIsLoading(false);
-      }, 1500);
+  const validEmail = "reliablecharge@gmail.com";
+  const validPassword = "admin@123";
+
+  if (!email || !password) return;
+
+  setIsLoading(true);
+  setLoginError("");
+
+  setTimeout(() => {
+    if (email === validEmail && password === validPassword) {
+      localStorage.setItem("isAuth", "true");
+
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", email);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
+
+      router.push("/dashboard");
+    } else {
+      setLoginError("Invalid email or password");
     }
-  };
+
+    setIsLoading(false);
+  }, 1000);
+};
 
   return (
     <div className="min-h-screen flex">
@@ -178,7 +192,9 @@ export default function DashboardLogin() {
                   Forgot Password?
                 </button>
               </div>
-
+{loginError && (
+  <p className="text-sm text-red-500 text-center">{loginError}</p>
+)}
               {/* Login Button */}
               <button
                 type="submit"

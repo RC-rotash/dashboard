@@ -1,304 +1,1765 @@
+
+
+// // "use client";
+
+// // import { useApi } from "@/app/componets/api/apiService";
+// // import { useState, useEffect } from "react";
+// // import { Download } from "lucide-react";
+// // import DashboardHeader from "@/app/componets/DashboardHeader";
+
+// // interface ChargerData {
+// //   sno: number;
+// //   name: string;
+// //   sessions: number;
+// //   duration: string;
+// //   amount: number;
+// //   units: number;
+// //   percentage: number;
+// //   installDate: string;
+// //   chargerId?: string;
+// //   group?: string;
+// //   power_output?: string;
+// // }
+
+// // interface GroupAssignment {
+// //   id: string;
+// //   chargerId: string;
+// //   installDate: string;
+// //   group: string;
+// //   createdAt: string;
+// // }
+
+// // interface Charger {
+// //   id: string;
+// //   name: string;
+// //   power_output: string;
+// //   property_id: string;
+// // }
+
+// // interface ReportData {
+// //   charger: string;
+// //   charger_id: string;
+// //   total_revenue: number;
+// //   total_units: number;
+// //   charging_time_seconds: number;
+// //   utilization_percentage: number;
+// //   total_sessions: number;
+// // }
+
+// // type TimeFilter = "yesterday" | "lastWeek" | "lastMonth";
+
+// // export default function DailyTransactionsReport() {
+// //   const { get, post } = useApi();
+
+// //   const [timeFilter, setTimeFilter] = useState<TimeFilter>("lastMonth");
+// //   const [loading, setLoading] = useState(true);
+
+// //   const [standaloneData, setStandaloneData] = useState<ChargerData[]>([]);
+// //   const [highwayData, setHighwayData] = useState<ChargerData[]>([]);
+// //   const [noidaHubData, setNoidaHubData] = useState<ChargerData[]>([]);
+// //   const [rwaData, setRwaData] = useState<ChargerData[]>([]);
+// //   const [unassignedData, setUnassignedData] = useState<ChargerData[]>([]);
+
+// //   const fetchAllData = async (startDate: string, endDate: string) => {
+// //     try {
+// //       setLoading(true);
+
+// //       // 1. Fetch ALL chargers
+// //       const chargerResponse = await get<any>("/public/charger-list");
+// //       const allChargers: Charger[] = chargerResponse?.data || chargerResponse || [];
+// //       console.log("Total chargers from API:", allChargers.length);
+
+// //       // 2. Fetch group assignments
+// //       const groupResponse = await post<any>("/admin/group-list");
+// //       const groupData = groupResponse?.data || groupResponse || [];
+
+// //       // Create maps for group and install date
+// //       const groupMap = new Map<string, string>();
+// //       const installDateMap = new Map<string, string>();
+
+// //       groupData.forEach((group: GroupAssignment) => {
+// //         if (group.chargerId && group.group) {
+// //           groupMap.set(group.chargerId, group.group);
+// //           if (group.installDate) {
+// //             installDateMap.set(group.chargerId, formatInstallDate(group.installDate));
+// //           }
+// //         }
+// //       });
+
+// //       // 3. Fetch report data
+// //       const reportResponse = await get<any>(`/public/report?start_date=${startDate}&end_date=${endDate}`);
+// //       const reportData = reportResponse?.data || reportResponse || [];
+
+// //       // Create a map for report data by charger_id
+// //       const reportMap = new Map<string, ReportData>();
+// //       reportData.forEach((item: ReportData) => {
+// //         reportMap.set(item.charger_id, item);
+// //       });
+// // // In fetchAllData function, after getting reportData
+// // console.log("Raw report data sample:", reportData.slice(0, 3).map(item => ({
+// //   charger_id: item.charger_id,
+// //   charger: item.charger,
+// //   utilization_percentage: item.utilization_percentage,
+// //   total_units: item.total_units,
+// //   charging_time_seconds: item.charging_time_seconds,
+// //   total_sessions: item.total_sessions
+// // })));
+// //       // 4. Process ALL chargers
+// //       const standalone: ChargerData[] = [];
+// //       const highway: ChargerData[] = [];
+// //       const noidaHub: ChargerData[] = [];
+// //       const rwa: ChargerData[] = [];
+// //       const unassigned: ChargerData[] = [];
+
+// //       allChargers.forEach((charger: Charger, index: number) => {
+// //         const chargerGroup = groupMap.get(charger.id) || "";
+// //         const reportItem = reportMap.get(charger.id);
+// //         const installDate = installDateMap.get(charger.id) || "Not Set";
+
+// //         const sessions = reportItem?.total_sessions || 0;
+// //         const chargingSeconds = reportItem?.charging_time_seconds || 0;
+// //         const revenue = Math.round(reportItem?.total_revenue || 0);
+// //         const units = Math.round((reportItem?.total_units || 0) / 1000);
+// //         const utilization =reportItem?.utilization_percentage || 0;
+
+// //         const chargerInfo: ChargerData = {
+// //           sno: index + 1,
+// //           name: charger.name,
+// //           sessions: sessions,
+// //           duration: formatSeconds(chargingSeconds),
+// //           amount: revenue,
+// //           units: units,
+// //           percentage: utilization,
+// //           installDate: installDate,
+// //           chargerId: charger.id,
+// //           group: chargerGroup,
+// //           power_output: charger.power_output
+// //         };
+
+// //         // Categorize based ONLY on group (AC/DC doesn't matter)
+// //         if (chargerGroup === "HIGHWAY") {
+// //           highway.push(chargerInfo);
+// //         } else if (chargerGroup === "NOIDA135HUB") {
+// //           noidaHub.push(chargerInfo);
+// //         } else if (chargerGroup === "RWA") {
+// //           rwa.push(chargerInfo);
+// //         } else if (chargerGroup === "STANDALONE") {
+// //           standalone.push(chargerInfo);
+// //         } else {
+// //           // No group assigned
+// //           unassigned.push(chargerInfo);
+// //         }
+// //       });
+
+// //       console.log("Standalone:", standalone.length);
+// //       console.log("Highway:", highway.length);
+// //       console.log("Noida Hub:", noidaHub.length);
+// //       console.log("RWA:", rwa.length);
+// //       console.log("Unassigned:", unassigned.length);
+// //       console.log("Total:", standalone.length + highway.length + noidaHub.length + rwa.length + unassigned.length);
+
+// //       // Sort by amount
+// //       standalone.sort((a, b) => b.amount - a.amount);
+// //       highway.sort((a, b) => b.amount - a.amount);
+// //       noidaHub.sort((a, b) => b.amount - a.amount);
+// //       rwa.sort((a, b) => b.amount - a.amount);
+// //       unassigned.sort((a, b) => b.amount - a.amount);
+
+// //       // Update sno
+// //       standalone.forEach((item, idx) => item.sno = idx + 1);
+// //       highway.forEach((item, idx) => item.sno = idx + 1);
+// //       noidaHub.forEach((item, idx) => item.sno = idx + 1);
+// //       rwa.forEach((item, idx) => item.sno = idx + 1);
+// //       unassigned.forEach((item, idx) => item.sno = idx + 1);
+
+// //       setStandaloneData(standalone);
+// //       setHighwayData(highway);
+// //       setNoidaHubData(noidaHub);
+// //       setRwaData(rwa);
+// //       setUnassignedData(unassigned);
+
+// //     } catch (err) {
+// //       console.error("Error fetching data:", err);
+// //     } finally {
+// //       setLoading(false);
+// //     }
+// //   };
+
+// //   const formatInstallDate = (dateString: string) => {
+// //     if (!dateString) return "Not Set";
+// //     const date = new Date(dateString);
+// //     return date.toLocaleDateString('en-IN', {
+// //       day: '2-digit',
+// //       month: 'short',
+// //       year: 'numeric'
+// //     });
+// //   };
+
+// //   const formatSeconds = (seconds: number) => {
+// //     if (!seconds || seconds === 0) return "0h 0m";
+// //     const hours = Math.floor(seconds / 3600);
+// //     const minutes = Math.floor((seconds % 3600) / 60);
+// //     return `${hours}h ${minutes}m`;
+// //   };
+
+// // const getDateRange = (filter: TimeFilter) => {
+// //   const today = new Date();
+
+// //   // ✅ LOCAL formatter (NO timezone issue)
+// //   const formatLocal = (d: Date) => {
+// //     const year = d.getFullYear();
+// //     const month = String(d.getMonth() + 1).padStart(2, "0");
+// //     const day = String(d.getDate()).padStart(2, "0");
+// //     return `${year}-${month}-${day}`;
+// //   };
+
+// //   switch (filter) {
+
+// //     case "yesterday": {
+// //       const y = new Date(today);
+// //       y.setDate(today.getDate() - 1);
+
+// //       return {
+// //         startDate: formatLocal(y),
+// //         endDate: formatLocal(y),
+// //       };
+// //     }
+
+// //     case "lastWeek": {
+// //       // ✅ Monday to Sunday (previous week)
+// //       const currentDay = today.getDay(); // 0 = Sunday
+// //       const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
+
+// //       const currentWeekMonday = new Date(today);
+// //       currentWeekMonday.setDate(today.getDate() - daysSinceMonday);
+
+// //       const lastWeekMonday = new Date(currentWeekMonday);
+// //       lastWeekMonday.setDate(currentWeekMonday.getDate() - 7);
+
+// //       const lastWeekSunday = new Date(currentWeekMonday);
+// //       lastWeekSunday.setDate(currentWeekMonday.getDate() - 1);
+
+// //       return {
+// //         startDate: formatLocal(lastWeekMonday),
+// //         endDate: formatLocal(lastWeekSunday),
+// //       };
+// //     }
+
+// //     case "lastMonth": {
+// //       // ✅ FULL previous calendar month (auto 28/30/31 handle)
+// //       const firstDayLastMonth = new Date(
+// //         today.getFullYear(),
+// //         today.getMonth() - 1,
+// //         1
+// //       );
+
+// //       const lastDayLastMonth = new Date(
+// //         today.getFullYear(),
+// //         today.getMonth(),
+// //         0
+// //       );
+
+// //       return {
+// //         startDate: formatLocal(firstDayLastMonth),
+// //         endDate: formatLocal(lastDayLastMonth),
+// //       };
+// //     }
+// //   }
+
+// //   // ✅ fallback = today
+// //   return {
+// //     startDate: formatLocal(today),
+// //     endDate: formatLocal(today),
+// //   };
+// // };
+
+// //   const handleFilterChange = (filter: TimeFilter) => {
+// //     setTimeFilter(filter);
+// //     const { startDate, endDate } = getDateRange(filter);
+// //     fetchAllData(startDate, endDate);
+// //   };
+
+// //   useEffect(() => {
+// //     const { startDate, endDate } = getDateRange("lastMonth");
+// //     fetchAllData(startDate, endDate);
+// //   }, []);
+
+// //   // Export single table to CSV
+// //   const exportTableToCSV = (title: string, data: ChargerData[]) => {
+// //     if (data.length === 0) {
+// //       alert(`No data available for ${title}`);
+// //       return;
+// //     }
+
+// //     const headers = ["S.No", "Charger Name", "Install Date", "Sessions", "Duration", "Amount (₹)", "Units (kWh)", "Utilization %"];
+// //     const rows = data.map((c) => [
+// //       c.sno, 
+// //       c.name, 
+// //       c.installDate, 
+// //       c.sessions, 
+// //       c.duration, 
+// //       c.amount, 
+// //       c.units, 
+// //       `${c.percentage}%`
+// //     ]);
+    
+// //     // Add total row
+// //     const totals = {
+// //       sessions: data.reduce((sum, d) => sum + d.sessions, 0),
+// //       amount: data.reduce((sum, d) => sum + d.amount, 0),
+// //       units: data.reduce((sum, d) => sum + d.units, 0)
+// //     };
+    
+// //     rows.push(["TOTAL", "", "", totals.sessions, "", totals.amount, totals.units, ""]);
+    
+// //     const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
+// //     const blob = new Blob([csv], { type: "text/csv" });
+// //     const url = URL.createObjectURL(blob);
+// //     const a = document.createElement("a");
+// //     a.href = url;
+// //     a.download = `${title}-${getFilterLabel()}.csv`;
+// //     a.click();
+// //     URL.revokeObjectURL(url);
+// //   };
+
+// //   // Export all tables to CSV
+// //   const exportAllToCSV = () => {
+// //     const allData = [...standaloneData, ...highwayData, ...noidaHubData, ...rwaData, ...unassignedData];
+// //     if (allData.length === 0) {
+// //       alert("No data available to export");
+// //       return;
+// //     }
+
+// //     const headers = ["S.No", "Charger Name", "Group", "Install Date", "Sessions", "Duration", "Amount (₹)", "Units (kWh)", "Utilization %"];
+// //     const rows = allData.map((c) => [
+// //       c.sno, 
+// //       c.name, 
+// //       c.group || "Unassigned", 
+// //       c.installDate, 
+// //       c.sessions, 
+// //       c.duration, 
+// //       c.amount, 
+// //       c.units, 
+// //       `${c.percentage}%`
+// //     ]);
+    
+// //     const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
+// //     const blob = new Blob([csv], { type: "text/csv" });
+// //     const url = URL.createObjectURL(blob);
+// //     const a = document.createElement("a");
+// //     a.href = url;
+// //     a.download = `daily-report-${getFilterLabel()}.csv`;
+// //     a.click();
+// //     URL.revokeObjectURL(url);
+// //   };
+
+// //   const getFilterLabel = () => {
+// //     switch (timeFilter) {
+// //       case "yesterday": return "Yesterday";
+// //       case "lastWeek": return "Last Week";
+// //       case "lastMonth": return "Last Month";
+// //     }
+// //   };
+
+// //   const renderTable = (title: string, data: ChargerData[], gradientFrom: string, gradientTo: string) => {
+// //     if (data.length === 0) return null;
+
+// //     const totals = {
+// //       sessions: data.reduce((sum, d) => sum + d.sessions, 0),
+// //       amount: data.reduce((sum, d) => sum + d.amount, 0),
+// //       units: data.reduce((sum, d) => sum + d.units, 0)
+// //     };
+
+// //     return (
+// //       <div className="mb-8">
+// //         <div className="flex justify-between items-center mb-2">
+// //           <h3 className="text-base font-semibold text-gray-700">{title} ({data.length})</h3>
+// //           <button
+// //             onClick={() => exportTableToCSV(title, data)}
+// //             className="px-3 py-1.5 text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all flex items-center gap-2 shadow-sm"
+// //           >
+// //             <Download size={12} />
+// //           </button>
+// //         </div>
+// //         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+// //           <div className="overflow-x-auto">
+// //             <table className="w-full text-xs">
+// //               <thead className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} border-b border-gray-200`}>
+// //                 <tr className="text-left">
+// //                   <th className="px-4 py-3 font-semibold text-gray-700 w-16">S.No</th>
+// //                   <th className="px-4 py-3 font-semibold text-gray-700">Charger Name</th>
+// //                   <th className="px-4 py-3 font-semibold text-gray-700 text-center w-28">Install Date</th>
+// //                   <th className="px-4 py-3 font-semibold text-gray-700 text-center w-20">Sessions</th>
+// //                   <th className="px-4 py-3 font-semibold text-gray-700 text-center w-24">Duration</th>
+// //                   <th className="px-4 py-3 font-semibold text-gray-700 text-right w-28">Amount (₹)</th>
+// //                   <th className="px-4 py-3 font-semibold text-gray-700 text-right w-28">Units (kWh)</th>
+// //                   <th className="px-4 py-3 font-semibold text-gray-700 text-center w-28">Utilization %</th>
+// //                 </tr>
+// //               </thead>
+// //               <tbody className="divide-y divide-gray-100">
+// //                 {data.map((charger) => (
+// //                   <tr key={charger.sno} className="hover:bg-gray-50 transition-colors">
+// //                     <td className="px-4 py-2 text-gray-500">{charger.sno}</td>
+// //                     <td className="px-4 py-2 text-gray-700 max-w-[300px] truncate" title={charger.name}>
+// //                       {charger.name}
+// //                     </td>
+// //                     <td className="px-4 py-2 text-center">
+// //                       {charger.installDate}
+// //                     </td>
+// //                     <td className="px-4 py-2 text-center text-gray-600">{charger.sessions}</td>
+// //                     <td className="px-4 py-2 text-center text-gray-500">{charger.duration}</td>
+// //                     <td className="px-4 py-2 text-right font-medium text-gray-700">
+// //                       ₹{charger.amount.toLocaleString()}
+// //                     </td>
+// //                     <td className="px-4 py-2 text-right text-gray-600">{charger.units.toLocaleString()}</td>
+// //                     <td className="px-4 py-2 text-center">
+// //                       <span className={`font-medium ${charger.percentage >= 4 ? "text-green-600" :
+// //                           charger.percentage > 4 ? "text-red-600"  :
+// //                               "text-red-600"
+// //                         }`}>
+// //                     {charger.percentage.toFixed(1)}%
+// //                       </span>
+// //                     </td>
+// //                   </tr>
+// //                 ))}
+// //               </tbody>
+// //               <tfoot className="bg-gray-100 border-t border-gray-200 font-medium">
+// //                 <tr>
+// //                   <td colSpan={3} className="px-4 py-2 text-right text-gray-600">Total:</td>
+// //                   <td className="px-4 py-2 text-center text-gray-800 font-semibold">{totals.sessions}</td>
+// //                   <td className="px-4 py-2 text-center text-gray-500">-</td>
+// //                   <td className="px-4 py-2 text-right text-gray-800 font-semibold">₹{totals.amount.toLocaleString()}</td>
+// //                   <td className="px-4 py-2 text-right text-gray-800 font-semibold">{totals.units.toLocaleString()}</td>
+// //                   <td className="px-4 py-2 text-center text-gray-500">-</td>
+// //                 </tr>
+// //               </tfoot>
+// //             </table>
+// //           </div>
+// //         </div>
+// //       </div>
+// //     );
+// //   };
+
+// //   if (loading) {
+// //     return (
+// //       <div className="flex items-center justify-center h-96 mt-16">
+// //         <div className="text-center">
+// //           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0094FE] mx-auto"></div>
+// //           <p className="mt-4 text-gray-600">Loading report data...</p>
+// //         </div>
+// //       </div>
+// //     );
+// //   }
+
+// //   return (
+// //     <div className="w-full min-h-screen bg-gray-50 overflow-x-hidden">
+// //       <DashboardHeader
+// //   subtitle={`${getFilterLabel()} Report`}
+// //   title={'Daily CMS Transactions Report'}
+// // />
+// //       <div className="w-full px-6 py-6 mt-16">
+        
+
+// //         <div className="flex gap-3 mb-6">
+// //           <button
+// //             onClick={() => handleFilterChange("yesterday")}
+// //             className={`px-6 py-2 rounded-lg text-xs font-medium transition-all ${timeFilter === "yesterday"
+// //                 ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+// //                 : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+// //               }`}
+// //           >
+// //             Yesterday
+// //           </button>
+// //           <button
+// //             onClick={() => handleFilterChange("lastWeek")}
+// //             className={`px-6 py-2 rounded-lg text-xs font-medium transition-all ${timeFilter === "lastWeek"
+// //                 ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+// //                 : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+// //               }`}
+// //           >
+// //             Last Week
+// //           </button>
+// //           <button
+// //             onClick={() => handleFilterChange("lastMonth")}
+// //             className={`px-5 py-1 rounded-lg text-xs font-medium transition-all ${timeFilter === "lastMonth"
+// //                 ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+// //                 : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+// //               }`}
+// //           >
+// //             Last Month
+// //           </button>
+// //           <button
+// //             onClick={exportAllToCSV}
+// //             className="px-5 text-xs bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:bg-gradient-to-r from-blue-500 to-blue-600  rounded-lg  flex items-center gap-2"
+// //           >
+// //             <Download size={14} /> Export All Reports
+// //           </button>
+// //         </div>
+
+// //         {/* Tables - Based ONLY on Group, not AC/DC */}
+// //         {renderTable("Standalone Chargers", standaloneData, "from-green-100", "to-green-50")}
+// //         {renderTable("Highway Chargers", highwayData, "from-purple-100", "to-purple-50")}
+// //         {renderTable("Noida Hub Sector 135", noidaHubData, "from-blue-100", "to-blue-50")}
+// //         {renderTable("RWA Chargers", rwaData, "from-orange-100", "to-orange-50")}
+// //         {renderTable("Unassigned Chargers", unassignedData, "from-gray-100", "to-gray-50")}
+
+// //         {standaloneData.length === 0 && highwayData.length === 0 &&
+// //           noidaHubData.length === 0 && rwaData.length === 0 && unassignedData.length === 0 && (
+// //             <div className="text-center py-12 bg-white rounded-lg">
+// //               <p className="text-gray-500">No data found for selected date range</p>
+// //             </div>
+// //           )}
+// //       </div>
+// //     </div>
+// //   );
+// // }
+
+
+// "use client";
+
+// import { useApi } from "@/app/componets/api/apiService";
+// import { useState, useEffect } from "react";
+// import { Download, ChevronDown, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
+// import DashboardHeader from "@/app/componets/DashboardHeader";
+
+// interface ChargerData {
+//   sno: number;
+//   name: string;
+//   sessions: number;
+//   duration: string;
+//   amount: number;
+//   units: number;
+//   percentage: number;
+//   installDate: string;
+//   chargerId?: string;
+//   group?: string;
+//   power_output?: string;
+// }
+
+// interface GroupAssignment {
+//   id: string;
+//   chargerId: string;
+//   installDate: string;
+//   group: string;
+//   createdAt: string;
+// }
+
+// interface Charger {
+//   id: string;
+//   name: string;
+//   power_output: string;
+//   property_id: string;
+// }
+
+// interface ReportData {
+//   charger: string;
+//   charger_id: string;
+//   total_revenue: number;
+//   total_units: number;
+//   charging_time_seconds: number;
+//   utilization_percentage: number;
+//   total_sessions: number;
+// }
+
+// interface DailyData {
+//   date: string;
+//   sessions: number;
+//   duration: string;
+//   amount: number;
+//   units: number;
+//   utilization: number;
+// }
+
+// type TimeFilter = "yesterday" | "lastWeek" | "lastMonth";
+
+// export default function DailyTransactionsReport() {
+//   const { get, post } = useApi();
+
+//   const [timeFilter, setTimeFilter] = useState<TimeFilter>("lastMonth");
+//   const [loading, setLoading] = useState(true);
+//   const [expandedCharger, setExpandedCharger] = useState<string | null>(null);
+//   const [chargerDailyData, setChargerDailyData] = useState<Map<string, DailyData[]>>(new Map());
+//   const [loadingDaily, setLoadingDaily] = useState<Map<string, boolean>>(new Map());
+
+//   const [standaloneData, setStandaloneData] = useState<ChargerData[]>([]);
+//   const [highwayData, setHighwayData] = useState<ChargerData[]>([]);
+//   const [noidaHubData, setNoidaHubData] = useState<ChargerData[]>([]);
+//   const [rwaData, setRwaData] = useState<ChargerData[]>([]);
+//   const [unassignedData, setUnassignedData] = useState<ChargerData[]>([]);
+
+//   const fetchAllData = async (startDate: string, endDate: string) => {
+//     try {
+//       setLoading(true);
+
+//       // 1. Fetch ALL chargers
+//       const chargerResponse = await get<any>("/public/charger-list");
+//       const allChargers: Charger[] = chargerResponse?.data || chargerResponse || [];
+//       console.log("Total chargers from API:", allChargers.length);
+
+//       // 2. Fetch group assignments
+//       const groupResponse = await post<any>("/admin/group-list");
+//       const groupData = groupResponse?.data || groupResponse || [];
+
+//       // Create maps for group and install date
+//       const groupMap = new Map<string, string>();
+//       const installDateMap = new Map<string, string>();
+
+//       groupData.forEach((group: GroupAssignment) => {
+//         if (group.chargerId && group.group) {
+//           groupMap.set(group.chargerId, group.group);
+//           if (group.installDate) {
+//             installDateMap.set(group.chargerId, formatInstallDate(group.installDate));
+//           }
+//         }
+//       });
+
+//       // 3. Fetch report data
+//       const reportResponse = await get<any>(`/public/report?start_date=${startDate}&end_date=${endDate}`);
+//       const reportData = reportResponse?.data || reportResponse || [];
+
+//       // Create a map for report data by charger_id
+//       const reportMap = new Map<string, ReportData>();
+//       reportData.forEach((item: ReportData) => {
+//         reportMap.set(item.charger_id, item);
+//       });
+
+//       // 4. Process ALL chargers
+//       const standalone: ChargerData[] = [];
+//       const highway: ChargerData[] = [];
+//       const noidaHub: ChargerData[] = [];
+//       const rwa: ChargerData[] = [];
+//       const unassigned: ChargerData[] = [];
+
+//       allChargers.forEach((charger: Charger, index: number) => {
+//         const chargerGroup = groupMap.get(charger.id) || "";
+//         const reportItem = reportMap.get(charger.id);
+//         const installDate = installDateMap.get(charger.id) || "Not Set";
+
+//         const sessions = reportItem?.total_sessions || 0;
+//         const chargingSeconds = reportItem?.charging_time_seconds || 0;
+//         const revenue = Math.round(reportItem?.total_revenue || 0);
+//         const units = Math.round((reportItem?.total_units || 0) / 1000);
+//         const utilization = reportItem?.utilization_percentage || 0;
+
+//         const chargerInfo: ChargerData = {
+//           sno: index + 1,
+//           name: charger.name,
+//           sessions: sessions,
+//           duration: formatSeconds(chargingSeconds),
+//           amount: revenue,
+//           units: units,
+//           percentage: utilization,
+//           installDate: installDate,
+//           chargerId: charger.id,
+//           group: chargerGroup,
+//           power_output: charger.power_output
+//         };
+
+//         if (chargerGroup === "HIGHWAY") {
+//           highway.push(chargerInfo);
+//         } else if (chargerGroup === "NOIDA135HUB") {
+//           noidaHub.push(chargerInfo);
+//         } else if (chargerGroup === "RWA") {
+//           rwa.push(chargerInfo);
+//         } else if (chargerGroup === "STANDALONE") {
+//           standalone.push(chargerInfo);
+//         } else {
+//           unassigned.push(chargerInfo);
+//         }
+//       });
+
+//       // Sort by amount
+//       standalone.sort((a, b) => b.amount - a.amount);
+//       highway.sort((a, b) => b.amount - a.amount);
+//       noidaHub.sort((a, b) => b.amount - a.amount);
+//       rwa.sort((a, b) => b.amount - a.amount);
+//       unassigned.sort((a, b) => b.amount - a.amount);
+
+//       // Update sno
+//       standalone.forEach((item, idx) => item.sno = idx + 1);
+//       highway.forEach((item, idx) => item.sno = idx + 1);
+//       noidaHub.forEach((item, idx) => item.sno = idx + 1);
+//       rwa.forEach((item, idx) => item.sno = idx + 1);
+//       unassigned.forEach((item, idx) => item.sno = idx + 1);
+
+//       setStandaloneData(standalone);
+//       setHighwayData(highway);
+//       setNoidaHubData(noidaHub);
+//       setRwaData(rwa);
+//       setUnassignedData(unassigned);
+
+//     } catch (err) {
+//       console.error("Error fetching data:", err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Fetch last 7 days data for a specific charger
+//   const fetchChargerLast7Days = async (chargerId: string, chargerName: string) => {
+//     if (chargerDailyData.has(chargerId)) {
+//       setExpandedCharger(expandedCharger === chargerId ? null : chargerId);
+//       return;
+//     }
+
+//     setLoadingDaily(prev => new Map(prev).set(chargerId, true));
+//     setExpandedCharger(chargerId);
+
+//     try {
+//       const today = new Date();
+//       const endDate = new Date(today);
+//       const startDate = new Date(today);
+//       startDate.setDate(today.getDate() - 7);
+
+//       const formatLocal = (d: Date) => {
+//         const year = d.getFullYear();
+//         const month = String(d.getMonth() + 1).padStart(2, "0");
+//         const day = String(d.getDate()).padStart(2, "0");
+//         return `${year}-${month}-${day}`;
+//       };
+
+//       const response = await get<any>(`/public/report?start_date=${formatLocal(startDate)}&end_date=${formatLocal(endDate)}`);
+//       const reportData = response?.data || response || [];
+      
+//       // Filter data for specific charger
+//       const chargerReports = reportData.filter((item: ReportData) => item.charger_id === chargerId);
+      
+//       // Group by date (the API might return data for the period)
+//       const dailyDataMap = new Map<string, DailyData>();
+      
+//       // Get last 7 days
+//       for (let i = 6; i >= 0; i--) {
+//         const date = new Date(today);
+//         date.setDate(today.getDate() - i);
+//         const dateStr = formatLocal(date);
+//         const displayDate = date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+        
+//         // Find report for this date (if API returns per-day data)
+//         // Note: If API returns aggregated data for the period, this needs adjustment
+//         const dayReport = chargerReports.find((r: any) => {
+//           // If API has date field, use it; otherwise, we need to simulate or adjust
+//           return r.date === dateStr;
+//         });
+        
+//         dailyDataMap.set(dateStr, {
+//           date: displayDate,
+//           sessions: dayReport?.total_sessions || 0,
+//           duration: formatSeconds(dayReport?.charging_time_seconds || 0),
+//           amount: Math.round(dayReport?.total_revenue || 0),
+//           units: Math.round((dayReport?.total_units || 0) / 1000),
+//           utilization: dayReport?.utilization_percentage || 0
+//         });
+//       }
+      
+//       // If API returns aggregated data (no per-day breakdown), create trend data
+//       // This shows the comparison between current period and previous period
+//       const dailyData: DailyData[] = Array.from(dailyDataMap.values());
+      
+//       setChargerDailyData(prev => new Map(prev).set(chargerId, dailyData));
+//     } catch (err) {
+//       console.error("Error fetching daily data:", err);
+//     } finally {
+//       setLoadingDaily(prev => new Map(prev).set(chargerId, false));
+//     }
+//   };
+
+//   const formatInstallDate = (dateString: string) => {
+//     if (!dateString) return "Not Set";
+//     const date = new Date(dateString);
+//     return date.toLocaleDateString('en-IN', {
+//       day: '2-digit',
+//       month: 'short',
+//       year: 'numeric'
+//     });
+//   };
+
+//   const formatSeconds = (seconds: number) => {
+//     if (!seconds || seconds === 0) return "0h 0m";
+//     const hours = Math.floor(seconds / 3600);
+//     const minutes = Math.floor((seconds % 3600) / 60);
+//     return `${hours}h ${minutes}m`;
+//   };
+
+//   const getDateRange = (filter: TimeFilter) => {
+//     const today = new Date();
+
+//     const formatLocal = (d: Date) => {
+//       const year = d.getFullYear();
+//       const month = String(d.getMonth() + 1).padStart(2, "0");
+//       const day = String(d.getDate()).padStart(2, "0");
+//       return `${year}-${month}-${day}`;
+//     };
+
+//     switch (filter) {
+//       case "yesterday": {
+//         const y = new Date(today);
+//         y.setDate(today.getDate() - 1);
+//         return { startDate: formatLocal(y), endDate: formatLocal(y) };
+//       }
+
+//       case "lastWeek": {
+//         const currentDay = today.getDay();
+//         const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
+//         const currentWeekMonday = new Date(today);
+//         currentWeekMonday.setDate(today.getDate() - daysSinceMonday);
+//         const lastWeekMonday = new Date(currentWeekMonday);
+//         lastWeekMonday.setDate(currentWeekMonday.getDate() - 7);
+//         const lastWeekSunday = new Date(currentWeekMonday);
+//         lastWeekSunday.setDate(currentWeekMonday.getDate() - 1);
+//         return {
+//           startDate: formatLocal(lastWeekMonday),
+//           endDate: formatLocal(lastWeekSunday),
+//         };
+//       }
+
+//       case "lastMonth": {
+//         const firstDayLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+//         const lastDayLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+//         return {
+//           startDate: formatLocal(firstDayLastMonth),
+//           endDate: formatLocal(lastDayLastMonth),
+//         };
+//       }
+//     }
+
+//     return { startDate: formatLocal(today), endDate: formatLocal(today) };
+//   };
+
+//   const handleFilterChange = (filter: TimeFilter) => {
+//     setTimeFilter(filter);
+//     const { startDate, endDate } = getDateRange(filter);
+//     fetchAllData(startDate, endDate);
+//     // Clear expanded data when filter changes
+//     setExpandedCharger(null);
+//     setChargerDailyData(new Map());
+//   };
+
+//   useEffect(() => {
+//     const { startDate, endDate } = getDateRange("lastMonth");
+//     fetchAllData(startDate, endDate);
+//   }, []);
+
+//   const exportTableToCSV = (title: string, data: ChargerData[]) => {
+//     if (data.length === 0) {
+//       alert(`No data available for ${title}`);
+//       return;
+//     }
+
+//     const headers = ["S.No", "Charger Name", "Install Date", "Sessions", "Duration", "Amount (₹)", "Units (kWh)", "Utilization %"];
+//     const rows = data.map((c) => [
+//       c.sno, 
+//       c.name, 
+//       c.installDate, 
+//       c.sessions, 
+//       c.duration, 
+//       c.amount, 
+//       c.units, 
+//       `${c.percentage.toFixed(1)}%`
+//     ]);
+    
+//     const totals = {
+//       sessions: data.reduce((sum, d) => sum + d.sessions, 0),
+//       amount: data.reduce((sum, d) => sum + d.amount, 0),
+//       units: data.reduce((sum, d) => sum + d.units, 0)
+//     };
+    
+//     rows.push(["TOTAL", "", "", totals.sessions, "", totals.amount, totals.units, ""]);
+    
+//     const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
+//     const blob = new Blob([csv], { type: "text/csv" });
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = `${title}-${getFilterLabel()}.csv`;
+//     a.click();
+//     URL.revokeObjectURL(url);
+//   };
+
+//   const exportAllToCSV = () => {
+//     const allData = [...standaloneData, ...highwayData, ...noidaHubData, ...rwaData, ...unassignedData];
+//     if (allData.length === 0) {
+//       alert("No data available to export");
+//       return;
+//     }
+
+//     const headers = ["S.No", "Charger Name", "Group", "Install Date", "Sessions", "Duration", "Amount (₹)", "Units (kWh)", "Utilization %"];
+//     const rows = allData.map((c) => [
+//       c.sno, 
+//       c.name, 
+//       c.group || "Unassigned", 
+//       c.installDate, 
+//       c.sessions, 
+//       c.duration, 
+//       c.amount, 
+//       c.units, 
+//       `${c.percentage.toFixed(1)}%`
+//     ]);
+    
+//     const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
+//     const blob = new Blob([csv], { type: "text/csv" });
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = `daily-report-${getFilterLabel()}.csv`;
+//     a.click();
+//     URL.revokeObjectURL(url);
+//   };
+
+//   const getFilterLabel = () => {
+//     switch (timeFilter) {
+//       case "yesterday": return "Yesterday";
+//       case "lastWeek": return "Last Week";
+//       case "lastMonth": return "Last Month";
+//     }
+//   };
+
+//   const getUtilizationColor = (percentage: number) => {
+//     if (percentage >= 50) return "text-green-600";
+//     if (percentage >= 20) return "text-yellow-600";
+//     if (percentage >= 4) return "text-orange-500";
+//     return "text-red-500";
+//   };
+
+//   const renderExpandedRow = (charger: ChargerData) => {
+//     const dailyData = chargerDailyData.get(charger.chargerId!);
+//     const isLoading = loadingDaily.get(charger.chargerId!);
+
+//     if (isLoading) {
+//       return (
+//         <tr className="bg-gray-50">
+//           <td colSpan={8} className="px-4 py-4 text-center">
+//             <div className="flex items-center justify-center gap-2">
+//               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+//               <span className="text-xs text-gray-500">Loading last 7 days data...</span>
+//             </div>
+//           </td>
+//         </tr>
+//       );
+//     }
+
+//     if (!dailyData || dailyData.length === 0) {
+//       return (
+//         <tr className="bg-gray-50">
+//           <td colSpan={8} className="px-4 py-4 text-center text-gray-400 text-xs">
+//             No data available for last 7 days
+//           </td>
+//         </tr>
+//       );
+//     }
+
+//     return (
+//       <>
+//         <tr className="bg-blue-50/30">
+//           <td colSpan={8} className="px-4 py-2">
+//             <div className="flex items-center gap-2 mb-2">
+//               <TrendingUp className="w-3 h-3 text-blue-600" />
+//               <span className="text-xs font-semibold text-blue-700">Last 7 Days Trend</span>
+//             </div>
+//             <div className="overflow-x-auto">
+//               <table className="w-full text-xs">
+//                 <thead>
+//                   <tr className="border-b border-blue-200">
+//                     <th className="px-2 py-1 text-left text-gray-600">Date</th>
+//                     <th className="px-2 py-1 text-center text-gray-600">Sessions</th>
+//                     <th className="px-2 py-1 text-center text-gray-600">Duration</th>
+//                     <th className="px-2 py-1 text-right text-gray-600">Amount (₹)</th>
+//                     <th className="px-2 py-1 text-right text-gray-600">Units (kWh)</th>
+//                     <th className="px-2 py-1 text-center text-gray-600">Utilization</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {dailyData.map((day, idx) => (
+//                     <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+//                       <td className="px-2 py-1.5 font-medium text-gray-700">{day.date}</td>
+//                       <td className="px-2 py-1.5 text-center text-gray-600">{day.sessions}</td>
+//                       <td className="px-2 py-1.5 text-center text-gray-500">{day.duration}</td>
+//                       <td className="px-2 py-1.5 text-right font-medium text-gray-700">₹{day.amount.toLocaleString()}</td>
+//                       <td className="px-2 py-1.5 text-right text-gray-600">{day.units.toLocaleString()}</td>
+//                       <td className="px-2 py-1.5 text-center">
+//                         <span className={`font-medium ${getUtilizationColor(day.utilization)}`}>
+//                           {day.utilization.toFixed(1)}%
+//                         </span>
+//                       </td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </td>
+//         </tr>
+//         {/* Comparison Summary Row */}
+//         {dailyData.length >= 2 && (
+//           <tr className="bg-gray-100">
+//             <td colSpan={8} className="px-4 py-2">
+//               <div className="flex items-center justify-between text-xs">
+//                 <div className="flex items-center gap-4">
+//                   <span className="text-gray-600">Weekly Comparison:</span>
+//                   <div className="flex items-center gap-1">
+//                     <TrendingUp className="w-3 h-3 text-green-600" />
+//                     <span className="text-green-600">
+//                       Sessions: {dailyData.reduce((sum, d) => sum + d.sessions, 0)}
+//                     </span>
+//                   </div>
+//                   <div className="flex items-center gap-1">
+//                     <span className="text-gray-600">Revenue:</span>
+//                     <span className="font-semibold text-blue-600">
+//                       ₹{dailyData.reduce((sum, d) => sum + d.amount, 0).toLocaleString()}
+//                     </span>
+//                   </div>
+//                   <div className="flex items-center gap-1">
+//                     <span className="text-gray-600">Units:</span>
+//                     <span className="font-semibold text-purple-600">
+//                       {dailyData.reduce((sum, d) => sum + d.units, 0).toLocaleString()} kWh
+//                     </span>
+//                   </div>
+//                 </div>
+//               </div>
+//             </td>
+//           </tr>
+//         )}
+//       </>
+//     );
+//   };
+
+//   const renderTable = (title: string, data: ChargerData[], gradientFrom: string, gradientTo: string) => {
+//     if (data.length === 0) return null;
+
+//     const totals = {
+//       sessions: data.reduce((sum, d) => sum + d.sessions, 0),
+//       amount: data.reduce((sum, d) => sum + d.amount, 0),
+//       units: data.reduce((sum, d) => sum + d.units, 0)
+//     };
+
+//     return (
+//       <div className="mb-8">
+//         <div className="flex justify-between items-center mb-2">
+//           <h3 className="text-base font-semibold text-gray-700">{title} ({data.length})</h3>
+//           <button
+//             onClick={() => exportTableToCSV(title, data)}
+//             className="px-3 py-1.5 text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all flex items-center gap-2 shadow-sm"
+//           >
+//             <Download size={12} />
+//           </button>
+//         </div>
+//         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+//           <div className="overflow-x-auto">
+//             <table className="w-full text-xs">
+//               <thead className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} border-b border-gray-200`}>
+//                 <tr className="text-left">
+//                   <th className="px-4 py-3 font-semibold text-gray-700 w-10"></th>
+//                   <th className="px-4 py-3 font-semibold text-gray-700 w-16">S.No</th>
+//                   <th className="px-4 py-3 font-semibold text-gray-700">Charger Name</th>
+//                   <th className="px-4 py-3 font-semibold text-gray-700 text-center w-28">Install Date</th>
+//                   <th className="px-4 py-3 font-semibold text-gray-700 text-center w-20">Sessions</th>
+//                   <th className="px-4 py-3 font-semibold text-gray-700 text-center w-24">Duration</th>
+//                   <th className="px-4 py-3 font-semibold text-gray-700 text-right w-28">Amount (₹)</th>
+//                   <th className="px-4 py-3 font-semibold text-gray-700 text-right w-28">Units (kWh)</th>
+//                   <th className="px-4 py-3 font-semibold text-gray-700 text-center w-28">Utilization %</th>
+//                 </tr>
+//               </thead>
+//               <tbody className="divide-y divide-gray-100">
+//                 {data.map((charger) => (
+//                   <>
+//                     <tr key={charger.sno} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => fetchChargerLast7Days(charger.chargerId!, charger.name)}>
+//                       <td className="px-4 py-2">
+//                         {expandedCharger === charger.chargerId ? 
+//                           <ChevronDown className="w-4 h-4 text-gray-500" /> : 
+//                           <ChevronRight className="w-4 h-4 text-gray-500" />
+//                         }
+//                       </td>
+//                       <td className="px-4 py-2 text-gray-500">{charger.sno}</td>
+//                       <td className="px-4 py-2 text-gray-700 max-w-[300px] truncate" title={charger.name}>
+//                         {charger.name}
+//                       </td>
+//                       <td className="px-4 py-2 text-center">
+//                         {charger.installDate}
+//                       </td>
+//                       <td className="px-4 py-2 text-center text-gray-600">{charger.sessions}</td>
+//                       <td className="px-4 py-2 text-center text-gray-500">{charger.duration}</td>
+//                       <td className="px-4 py-2 text-right font-medium text-gray-700">
+//                         ₹{charger.amount.toLocaleString()}
+//                       </td>
+//                       <td className="px-4 py-2 text-right text-gray-600">{charger.units.toLocaleString()}</td>
+//                       <td className="px-4 py-2 text-center">
+//                         <span className={`font-medium ${getUtilizationColor(charger.percentage)}`}>
+//                           {charger.percentage.toFixed(1)}%
+//                         </span>
+//                       </td>
+//                     </tr>
+//                     {expandedCharger === charger.chargerId && renderExpandedRow(charger)}
+//                   </>
+//                 ))}
+//               </tbody>
+//               <tfoot className="bg-gray-100 border-t border-gray-200 font-medium">
+//                 <tr>
+//                   <td colSpan={4} className="px-4 py-2 text-right text-gray-600">Total:</td>
+//                   <td className="px-4 py-2 text-center text-gray-800 font-semibold">{totals.sessions}</td>
+//                   <td className="px-4 py-2 text-center text-gray-500">-</td>
+//                   <td className="px-4 py-2 text-right text-gray-800 font-semibold">₹{totals.amount.toLocaleString()}</td>
+//                   <td className="px-4 py-2 text-right text-gray-800 font-semibold">{totals.units.toLocaleString()}</td>
+//                   <td className="px-4 py-2 text-center text-gray-500">-</td>
+//                 </tr>
+//               </tfoot>
+//             </table>
+//           </div>
+//         </div>
+//       </div>
+//     );
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="flex items-center justify-center h-96 mt-16">
+//         <div className="text-center">
+//           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0094FE] mx-auto"></div>
+//           <p className="mt-4 text-gray-600">Loading report data...</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="w-full min-h-screen bg-gray-50 overflow-x-hidden">
+//       <DashboardHeader
+//         subtitle={`${getFilterLabel()} Report`}
+//         title={'Daily CMS Transactions Report'}
+//       />
+//       <div className="w-full px-6 py-6 mt-16">
+//         <div className="flex gap-3 mb-6">
+//           <button
+//             onClick={() => handleFilterChange("yesterday")}
+//             className={`px-6 py-2 rounded-lg text-xs font-medium transition-all ${timeFilter === "yesterday"
+//                 ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+//                 : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+//               }`}
+//           >
+//             Yesterday
+//           </button>
+//           <button
+//             onClick={() => handleFilterChange("lastWeek")}
+//             className={`px-6 py-2 rounded-lg text-xs font-medium transition-all ${timeFilter === "lastWeek"
+//                 ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+//                 : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+//               }`}
+//           >
+//             Last Week
+//           </button>
+//           <button
+//             onClick={() => handleFilterChange("lastMonth")}
+//             className={`px-5 py-1 rounded-lg text-xs font-medium transition-all ${timeFilter === "lastMonth"
+//                 ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+//                 : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+//               }`}
+//           >
+//             Last Month
+//           </button>
+//           <button
+//             onClick={exportAllToCSV}
+//             className="px-5 text-xs bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center gap-2"
+//           >
+//             <Download size={14} /> Export All Reports
+//           </button>
+//         </div>
+
+//         {renderTable("Standalone Chargers", standaloneData, "from-green-100", "to-green-50")}
+//         {renderTable("Highway Chargers", highwayData, "from-purple-100", "to-purple-50")}
+//         {renderTable("Noida Hub Sector 135", noidaHubData, "from-blue-100", "to-blue-50")}
+//         {renderTable("RWA Chargers", rwaData, "from-orange-100", "to-orange-50")}
+//         {renderTable("Unassigned Chargers", unassignedData, "from-gray-100", "to-gray-50")}
+
+//         {standaloneData.length === 0 && highwayData.length === 0 &&
+//           noidaHubData.length === 0 && rwaData.length === 0 && unassignedData.length === 0 && (
+//             <div className="text-center py-12 bg-white rounded-lg">
+//               <p className="text-gray-500">No data found for selected date range</p>
+//             </div>
+//           )}
+//       </div>
+//     </div>
+//   );
+// }
+
 "use client";
 
-import { useState, useMemo } from "react";
-import { Download, TrendingUp, TrendingDown, Calendar } from "lucide-react";
+import { useApi } from "@/app/componets/api/apiService";
+import React, { useState, useEffect } from "react";
+import { Download, ChevronDown, ChevronRight, TrendingUp } from "lucide-react";
+import DashboardHeader from "@/app/componets/DashboardHeader";
 
-// ==================== DATA STRUCTURES ====================
 interface ChargerData {
   sno: number;
-  liveDate: string;
   name: string;
-  percentChange: number | string;
+  sessions: number;
   duration: string;
   amount: number;
   units: number;
-  prevDuration: string;
-  prevAmount: number;
-  prevUnits: number;
-  mtdAmount: number;
-  mtdUnits: number;
-  avgAmountPerDay: number;
-  avgUnitsPerDay: number;
+  percentage: number;
+  installDate: string;
+  chargerId?: string;
+  group?: string;
+  power_output?: string;
 }
 
-// ---------- 1. Stand‑Alone DC Chargers ----------
-const standAloneDCData: ChargerData[] = [
-  { sno: 1, liveDate: "01-Jan-25", name: "KW Delhi 6 Mall RC 60kW DC", percentChange: -49, duration: "6:49:12", amount: 4637, units: 221, prevDuration: "13:47:54", prevAmount: 9110, prevUnits: 434, mtdAmount: 174478, mtdUnits: 8310, avgAmountPerDay: 5628, avgUnitsPerDay: 268 },
-  { sno: 2, liveDate: "14-Aug-25", name: "Bhairon Marg RC 60kW DC", percentChange: -37, duration: "2:34:40", amount: 1705, units: 96, prevDuration: "6:06:41", prevAmount: 2671, prevUnits: 152, mtdAmount: 38876, mtdUnits: 2180, avgAmountPerDay: 1254, avgUnitsPerDay: 70 },
-  { sno: 3, liveDate: "29-Aug-25", name: "Titagarh RC 60KW DC", percentChange: -48, duration: "0:41:53", amount: 182, units: 12, prevDuration: "1:31:11", prevAmount: 347, prevUnits: 23, mtdAmount: 3149, mtdUnits: 210, avgAmountPerDay: 102, avgUnitsPerDay: 7 },
-  { sno: 4, liveDate: "04-Oct-25", name: "CGO Complex RC 60kW DC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 5, liveDate: "19-Oct-25", name: "Airport road RC 60 kW DC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 6, liveDate: "19-Oct-25", name: "Munirka Near Udupi RC 60kW DC", percentChange: 16, duration: "2:09:16", amount: 1619, units: 90, prevDuration: "1:31:53", prevAmount: 1390, prevUnits: 77, mtdAmount: 32058, mtdUnits: 1781, avgAmountPerDay: 1034, avgUnitsPerDay: 57 },
-  { sno: 7, liveDate: "06-Nov-25", name: "Rajokri RC 60kW DC", percentChange: -30, duration: "1:12:10", amount: 644, units: 32, prevDuration: "1:01:50", prevAmount: 586, prevUnits: 46, mtdAmount: 29714, mtdUnits: 1558, avgAmountPerDay: 959, avgUnitsPerDay: 50 },
-  { sno: 8, liveDate: "12-Dec-25", name: "DDA Shopping complex Rajdhani Enclave RC 60kW DC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:51:11", prevAmount: 690, prevUnits: 38, mtdAmount: 19078, mtdUnits: 1074, avgAmountPerDay: 615, avgUnitsPerDay: 35 },
-  { sno: 9, liveDate: "12-Dec-25", name: "MCD Parking near Lakshmi Nagar metro RC 60kW DC", percentChange: -16, duration: "1:00:26", amount: 612, units: 48, prevDuration: "1:19:17", prevAmount: 1027, prevUnits: 57, mtdAmount: 21889, mtdUnits: 1286, avgAmountPerDay: 706, avgUnitsPerDay: 41 },
-  { sno: 10, liveDate: "30-Dec-25", name: "Noida Sector 2 RC 60 kW DC", percentChange: -28, duration: "11:38:04", amount: 2611, units: 172, prevDuration: "9:20:58", prevAmount: 3463, prevUnits: 238, mtdAmount: 74778, mtdUnits: 4835, avgAmountPerDay: 2412, avgUnitsPerDay: 156 },
-  { sno: 11, liveDate: "30-Dec-25", name: "MCD Parking West ganesh nagar chowk 60 kW DC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 12, liveDate: "29-Jan-26", name: "MCD Parking Parmanand hospital West Vinod Nagar 60kW DC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:28:52", prevAmount: 358, prevUnits: 20, mtdAmount: 2919, mtdUnits: 163, avgAmountPerDay: 94, avgUnitsPerDay: 5 },
-  { sno: 13, liveDate: "28-Feb-26", name: "Parx Laureate RC 60kW DC", percentChange: "#DIV/0!", duration: "0:28:35", amount: 239, units: 17, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 13169, mtdUnits: 941, avgAmountPerDay: 425, avgUnitsPerDay: 30 },
-  { sno: 14, liveDate: "28-Feb-26", name: "KW Blue Pearl Karol Bagh RC 60kW DC", percentChange: 78, duration: "0:49:05", amount: 462, units: 22, prevDuration: "0:14:02", prevAmount: 259, prevUnits: 12, mtdAmount: 6771, mtdUnits: 322, avgAmountPerDay: 218, avgUnitsPerDay: 10 },
-  { sno: 15, liveDate: "06-Mar-26", name: "Ayodhya Enclave Rohini RC 60kW DC", percentChange: 103, duration: "1:11:35", amount: 663, units: 33, prevDuration: "0:57:00", prevAmount: 326, prevUnits: 16, mtdAmount: 11030, mtdUnits: 552, avgAmountPerDay: 356, avgUnitsPerDay: 18 },
-  { sno: 16, liveDate: "06-Mar-26", name: "MCD Parking Star City mall RC 60kW DC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 1961, mtdUnits: 117, avgAmountPerDay: 63, avgUnitsPerDay: 4 },
-  { sno: 17, liveDate: "07-Mar-26", name: "Gardenia Glory RC 60kW DC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:22:33", prevAmount: 117, prevUnits: 6, mtdAmount: 10950, mtdUnits: 547, avgAmountPerDay: 353, avgUnitsPerDay: 18 },
-  { sno: 18, liveDate: "14-Mar-26", name: "ATS Greens Paradiso RC 120kW DC", percentChange: -26, duration: "2:30:44", amount: 918, units: 73, prevDuration: "3:31:54", prevAmount: 1246, prevUnits: 100, mtdAmount: 8561, mtdUnits: 654, avgAmountPerDay: 276, avgUnitsPerDay: 21 },
-  { sno: 19, liveDate: "14-Mar-26", name: "ATS Pristine RC 60kW DC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 1757, mtdUnits: 117, avgAmountPerDay: 57, avgUnitsPerDay: 4 },
-  { sno: 20, liveDate: "25-Mar-26", name: "Sarla Hotel Inn RC 60kW DC", percentChange: -73, duration: "0:59:20", amount: 334, units: 17, prevDuration: "1:03:47", prevAmount: 1256, prevUnits: 63, mtdAmount: 1625, mtdUnits: 81, avgAmountPerDay: 52, avgUnitsPerDay: 3 },
-  { sno: 21, liveDate: "30-Mar-26", name: "MCD Parking Muskan Chowk RC 60kW DC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-];
+interface GroupAssignment {
+  id: string;
+  chargerId: string;
+  installDate: string;
+  group: string;
+  createdAt: string;
+}
 
-// ---------- 2. Highway DC Chargers ----------
-const highwayDCData: ChargerData[] = [
-  { sno: 1, liveDate: "26-Apr-25", name: "Shiva Dhaba Hapur RC 60kW DC", percentChange: -24, duration: "2:04:18", amount: 654, units: 34, prevDuration: "1:07:29", prevAmount: 858, prevUnits: 45, mtdAmount: 32354, mtdUnits: 1703, avgAmountPerDay: 1044, avgUnitsPerDay: 55 },
-  { sno: 2, liveDate: "24-Jun-25", name: "Shiva Dhaba Garh Mukteshwar RC 60kW DC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:21:35", prevAmount: 389, prevUnits: 20, mtdAmount: 16185, mtdUnits: 852, avgAmountPerDay: 522, avgUnitsPerDay: 27 },
-  { sno: 3, liveDate: "30-Jul-25", name: "Shiva Dhaba Mama Yadav Garh Mukteshwar RC 60kW DC", percentChange: -66, duration: "1:07:21", amount: 558, units: 29, prevDuration: "1:59:05", prevAmount: 1647, prevUnits: 87, mtdAmount: 22879, mtdUnits: 1211, avgAmountPerDay: 738, avgUnitsPerDay: 39 },
-  { sno: 4, liveDate: "22-Sep-25", name: "Shiva Dhaba Mama Yadav Athsaini RC 120kW DC", percentChange: -76, duration: "0:44:28", amount: 286, units: 15, prevDuration: "1:13:23", prevAmount: 1206, prevUnits: 63, mtdAmount: 16614, mtdUnits: 874, avgAmountPerDay: 536, avgUnitsPerDay: 28 },
-  { sno: 5, liveDate: "28-Oct-25", name: "Hotel Highway King Neelka RC 120kW DC", percentChange: -53, duration: "2:52:45", amount: 2235, units: 106, prevDuration: "5:47:14", prevAmount: 4755, prevUnits: 226, mtdAmount: 93086, mtdUnits: 4433, avgAmountPerDay: 3003, avgUnitsPerDay: 143 },
-  { sno: 6, liveDate: "28-Oct-25", name: "Hotel Highway King Shahpura RC 120kW DC", percentChange: -30, duration: "5:56:07", amount: 5238, units: 249, prevDuration: "12:15:18", prevAmount: 7534, prevUnits: 359, mtdAmount: 76702, mtdUnits: 3652, avgAmountPerDay: 2474, avgUnitsPerDay: 118 },
-  { sno: 7, liveDate: "03-Nov-25", name: "Hotel Highway King Bilaspur RC 120kW DC", percentChange: -21, duration: "2:30:26", amount: 1791, units: 85, prevDuration: "2:57:42", prevAmount: 2268, prevUnits: 108, mtdAmount: 56884, mtdUnits: 2709, avgAmountPerDay: 1835, avgUnitsPerDay: 87 },
-  { sno: 8, liveDate: "15-Nov-25", name: "Shiva Dhaba Avneesh Sharma Bajheri RC 60kW DC", percentChange: -30, duration: "1:19:36", amount: 663, units: 35, prevDuration: "1:49:15", prevAmount: 943, prevUnits: 50, mtdAmount: 26357, mtdUnits: 1387, avgAmountPerDay: 850, avgUnitsPerDay: 45 },
-  { sno: 9, liveDate: "27-Nov-25", name: "Shiva Dhaba Avneesh Sharma Barla RC 60kW DC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 11445, mtdUnits: 602, avgAmountPerDay: 369, avgUnitsPerDay: 19 },
-];
+interface Charger {
+  id: string;
+  name: string;
+  power_output: string;
+  property_id: string;
+}
 
-// ---------- 3. Stand‑Alone AC Chargers ----------
-const standAloneACData: ChargerData[] = [
-  { sno: 1, liveDate: "25-Jan-25", name: "BigBazaar Ameerpet RC 22 kW AC 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 1857, mtdUnits: 103, avgAmountPerDay: 60, avgUnitsPerDay: 3 },
-  { sno: 2, liveDate: "25-Jan-25", name: "BigBazaar Ameerpet RC 22 kW AC 2", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:31", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 3, liveDate: "25-Jan-25", name: "G S Center Point RC 22 kW AC 1", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "1:47:02", prevAmount: 362, prevUnits: 20, mtdAmount: 7047, mtdUnits: 391, avgAmountPerDay: 227, avgUnitsPerDay: 13 },
-  { sno: 4, liveDate: "25-Jan-25", name: "G S Center Point RC 22 kW AC 2", percentChange: "#DIV/0!", duration: "2:42:36", amount: 346, units: 19, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 2858, mtdUnits: 159, avgAmountPerDay: 92, avgUnitsPerDay: 5 },
-  { sno: 5, liveDate: "02-Jun-25", name: "Waghoba Eco Lodge RC 22 kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 6, liveDate: "04-Jul-25", name: "Kings Lodge RC 22 kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 7, liveDate: "14-Aug-25", name: "Bhairon Mandir Marg RC 10 kW AC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:20:06", prevAmount: 16, prevUnits: 1, mtdAmount: 647, mtdUnits: 43, avgAmountPerDay: 21, avgUnitsPerDay: 1 },
-  { sno: 8, liveDate: "14-Aug-25", name: "Bhairon Mandir Marg RC 3.3 kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 112, mtdUnits: 7, avgAmountPerDay: 4, avgUnitsPerDay: 0 },
-  { sno: 9, liveDate: "29-Aug-25", name: "Titagarh RC 22KW AC 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 10, liveDate: "29-Aug-25", name: "Titagarh RC 22KW AC 2", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 420, mtdUnits: 32, avgAmountPerDay: 14, avgUnitsPerDay: 1 },
-  { sno: 11, liveDate: "29-Aug-25", name: "Titagarh RC 22KW AC 3", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 364, mtdUnits: 26, avgAmountPerDay: 12, avgUnitsPerDay: 1 },
-  { sno: 12, liveDate: "06-Sep-25", name: "Bhogal RC 10kW AC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "6:25:52", prevAmount: 161, prevUnits: 11, mtdAmount: 6371, mtdUnits: 425, avgAmountPerDay: 206, avgUnitsPerDay: 14 },
-  { sno: 13, liveDate: "25-Sep-25", name: "Chirag Delhi RC 10kW AC", percentChange: 45, duration: "1:35:46", amount: 60, units: 4, prevDuration: "0:59:59", prevAmount: 41, prevUnits: 3, mtdAmount: 777, mtdUnits: 52, avgAmountPerDay: 25, avgUnitsPerDay: 2 },
-  { sno: 14, liveDate: "29-Sep-25", name: "Dhaula Kuan RC 3.3kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 491, mtdUnits: 33, avgAmountPerDay: 16, avgUnitsPerDay: 1 },
-  { sno: 15, liveDate: "30-Sep-25", name: "CDR Chowk RC 3.3kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 146, mtdUnits: 10, avgAmountPerDay: 5, avgUnitsPerDay: 0 },
-  { sno: 16, liveDate: "01-Oct-25", name: "IIT Metro Munirka RC 10 kW AC", percentChange: "#DIV/0!", duration: "1:30:05", amount: 21, units: 1, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 441, mtdUnits: 29, avgAmountPerDay: 14, avgUnitsPerDay: 1 },
-  { sno: 17, liveDate: "01-Oct-25", name: "IIT Metro Munirka RC 3.3kW AC", percentChange: "#DIV/0!", duration: "0:37:30", amount: 15, units: 1, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 15, mtdUnits: 1, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 18, liveDate: "01-Oct-25", name: "Moti Bagh RC 3.3kW AC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:25:57", prevAmount: 20, prevUnits: 1, mtdAmount: 328, mtdUnits: 22, avgAmountPerDay: 11, avgUnitsPerDay: 1 },
-  { sno: 19, liveDate: "01-Oct-25", name: "Munirka Near Udupi RC 10 kW AC", percentChange: -37, duration: "1:00:41", amount: 15, units: 1, prevDuration: "0:57:46", prevAmount: 23, prevUnits: 2, mtdAmount: 166, mtdUnits: 11, avgAmountPerDay: 5, avgUnitsPerDay: 0 },
-  { sno: 20, liveDate: "01-Oct-25", name: "Munirka Near Udupi RC 3.3kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 81, mtdUnits: 5, avgAmountPerDay: 3, avgUnitsPerDay: 0 },
-  { sno: 21, liveDate: "01-Oct-25", name: "Munirka RC 3.3kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 669, mtdUnits: 45, avgAmountPerDay: 22, avgUnitsPerDay: 1 },
-  { sno: 22, liveDate: "01-Oct-25", name: "Nelson Mandela Road RC 10kW AC", percentChange: -45, duration: "1:57:07", amount: 75, units: 5, prevDuration: "3:35:02", prevAmount: 136, prevUnits: 9, mtdAmount: 4900, mtdUnits: 327, avgAmountPerDay: 158, avgUnitsPerDay: 11 },
-  { sno: 23, liveDate: "01-Oct-25", name: "Nelson Mandela Road RC 3.3kW AC", percentChange: "#DIV/0!", duration: "5:56:53", amount: 207, units: 14, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 756, mtdUnits: 50, avgAmountPerDay: 24, avgUnitsPerDay: 2 },
-  { sno: 24, liveDate: "01-Oct-25", name: "Pragati Maidan Mtka Peer RC 3.3kW AC", percentChange: "#DIV/0!", duration: "0:50:33", amount: 30, units: 2, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 153, mtdUnits: 10, avgAmountPerDay: 5, avgUnitsPerDay: 0 },
-  { sno: 25, liveDate: "04-Oct-25", name: "CGO Complex RC 10kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 26, liveDate: "06-Oct-25", name: "Chirag Delhi RC 3.3kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 1129, mtdUnits: 75, avgAmountPerDay: 36, avgUnitsPerDay: 2 },
-  { sno: 27, liveDate: "19-Oct-25", name: "Airport road RC 10kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 267, mtdUnits: 19, avgAmountPerDay: 9, avgUnitsPerDay: 1 },
-  { sno: 28, liveDate: "04-Nov-25", name: "Munirka RC 10kW AC", percentChange: "#DIV/0!", duration: "7:40:21", amount: 42, units: 3, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 244, mtdUnits: 16, avgAmountPerDay: 8, avgUnitsPerDay: 1 },
-  { sno: 29, liveDate: "07-Nov-25", name: "CDR Chowk RC 10kW AC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "1:20:50", prevAmount: 60, prevUnits: 4, mtdAmount: 891, mtdUnits: 59, avgAmountPerDay: 29, avgUnitsPerDay: 2 },
-  { sno: 30, liveDate: "17-Nov-25", name: "Parx Laureate RC 7.4kW AC 1", percentChange: "#DIV/0!", duration: "5:52:35", amount: 122, units: 11, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 7246, mtdUnits: 630, avgAmountPerDay: 234, avgUnitsPerDay: 20 },
-  { sno: 31, liveDate: "17-Nov-25", name: "Parx Laureate RC 7.4kW AC 2", percentChange: -69, duration: "5:07:53", amount: 178, units: 15, prevDuration: "8:47:14", prevAmount: 565, prevUnits: 49, mtdAmount: 6285, mtdUnits: 547, avgAmountPerDay: 203, avgUnitsPerDay: 18 },
-  { sno: 32, liveDate: "17-Nov-25", name: "Parx Laureate RC 7.4kW AC 3", percentChange: 13, duration: "6:09:04", amount: 288, units: 25, prevDuration: "3:15:47", prevAmount: 256, prevUnits: 22, mtdAmount: 10187, mtdUnits: 886, avgAmountPerDay: 329, avgUnitsPerDay: 29 },
-  { sno: 33, liveDate: "23-Dec-25", name: "Parx Laureate RC 7.4kW AC 4", percentChange: -40, duration: "7:09:04", amount: 476, units: 41, prevDuration: "9:27:41", prevAmount: 800, prevUnits: 70, mtdAmount: 8940, mtdUnits: 777, avgAmountPerDay: 288, avgUnitsPerDay: 25 },
-  { sno: 34, liveDate: "05-Jan-26", name: "Mangal Apartment Vasundhra RC 10kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 24, mtdUnits: 2, avgAmountPerDay: 1, avgUnitsPerDay: 0 },
-  { sno: 35, liveDate: "05-Jan-26", name: "Mangal Apartment Vasundhra RC 11kW AC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "3:53:49", prevAmount: 495, prevUnits: 41, mtdAmount: 3344, mtdUnits: 279, avgAmountPerDay: 108, avgUnitsPerDay: 9 },
-  { sno: 36, liveDate: "09-Jan-26", name: "Noida Sector 2 RC 3.3 kW AC", percentChange: 103, duration: "1:22:19", amount: 31, units: 2, prevDuration: "0:21:15", prevAmount: 15, prevUnits: 1, mtdAmount: 1148, mtdUnits: 77, avgAmountPerDay: 37, avgUnitsPerDay: 2 },
-  { sno: 37, liveDate: "09-Jan-26", name: "Una Enclave Mayur Vihar RC 10kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 38, liveDate: "14-Jan-26", name: "Beverly Hills Apartment 7.4kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 1228, mtdUnits: 102, avgAmountPerDay: 40, avgUnitsPerDay: 3 },
-  { sno: 39, liveDate: "19-Jan-26", name: "Metro Niketan Noida 7.4kW AC 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 2318, mtdUnits: 193, avgAmountPerDay: 75, avgUnitsPerDay: 6 },
-  { sno: 40, liveDate: "19-Jan-26", name: "Parx Laureate RC 7.4kW AC 5", percentChange: -65, duration: "4:25:12", amount: 277, units: 24, prevDuration: "10:17:15", prevAmount: 789, prevUnits: 69, mtdAmount: 8631, mtdUnits: 751, avgAmountPerDay: 278, avgUnitsPerDay: 24 },
-  { sno: 41, liveDate: "21-Jan-26", name: "Parx Laureate RC 7.4kW AC 6", percentChange: 131, duration: "3:06:56", amount: 139, units: 12, prevDuration: "1:41:32", prevAmount: 60, prevUnits: 5, mtdAmount: 5650, mtdUnits: 491, avgAmountPerDay: 182, avgUnitsPerDay: 16 },
-  { sno: 42, liveDate: "22-Jan-26", name: "Beverly Hills Apartment 10kW AC", percentChange: "#DIV/0!", duration: "6:55:34", amount: 213, units: 18, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 594, mtdUnits: 50, avgAmountPerDay: 19, avgUnitsPerDay: 2 },
-  { sno: 43, liveDate: "25-Jan-26", name: "Pragati Maidan Mtka Peer RC 44kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 317, mtdUnits: 21, avgAmountPerDay: 10, avgUnitsPerDay: 1 },
-  { sno: 44, liveDate: "03-Feb-26", name: "Hindustan Times Apartment Mayur Vihar 7.4kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 290, mtdUnits: 24, avgAmountPerDay: 9, avgUnitsPerDay: 1 },
-  { sno: 45, liveDate: "03-Feb-26", name: "Hindustan Times Apartment Mayur Vihar 10kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 590, mtdUnits: 49, avgAmountPerDay: 19, avgUnitsPerDay: 2 },
-  { sno: 46, liveDate: "03-Feb-26", name: "Aditya City Apartment RC 7.4kW AC 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 483, mtdUnits: 47, avgAmountPerDay: 16, avgUnitsPerDay: 2 },
-  { sno: 47, liveDate: "03-Feb-26", name: "Aditya City Apartment RC 7.4kW AC 2", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 821, mtdUnits: 80, avgAmountPerDay: 26, avgUnitsPerDay: 3 },
-  { sno: 48, liveDate: "04-Feb-26", name: "Metro Niketan Noida 7.4kW AC 2", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 2446, mtdUnits: 204, avgAmountPerDay: 79, avgUnitsPerDay: 7 },
-  { sno: 49, liveDate: "09-Feb-26", name: "Bhogal RC 10kW AC 2", percentChange: -94, duration: "0:20:39", amount: 6, units: 0, prevDuration: "2:32:55", prevAmount: 100, prevUnits: 7, mtdAmount: 6583, mtdUnits: 439, avgAmountPerDay: 212, avgUnitsPerDay: 14 },
-  { sno: 50, liveDate: "25-Feb-26", name: "MCD Parking Baldev Park near shivaji dharmshala RC 10kW AC 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 54, mtdUnits: 4, avgAmountPerDay: 2, avgUnitsPerDay: 0 },
-  { sno: 51, liveDate: "25-Feb-26", name: "MCD Parking Baldev Park near shivaji dharmshala RC 10kW AC 2", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 203, mtdUnits: 14, avgAmountPerDay: 7, avgUnitsPerDay: 0 },
-  { sno: 52, liveDate: "07-Mar-26", name: "Gardenia Glory RC 7.4kW AC 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 290, mtdUnits: 19, avgAmountPerDay: 9, avgUnitsPerDay: 1 },
-  { sno: 53, liveDate: "07-Mar-26", name: "Gardenia Glory RC 7.4kW AC 2", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 3, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 54, liveDate: "08-Mar-26", name: "Bhogal RC 10kW AC 3", percentChange: 191, duration: "17:08:52", amount: 652, units: 43, prevDuration: "9:06:34", prevAmount: 224, prevUnits: 15, mtdAmount: 5691, mtdUnits: 379, avgAmountPerDay: 184, avgUnitsPerDay: 12 },
-  { sno: 55, liveDate: "14-Mar-26", name: "Dhaula Kuan RC 10kW AC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "1:15:35", prevAmount: 43, prevUnits: 3, mtdAmount: 530, mtdUnits: 35, avgAmountPerDay: 17, avgUnitsPerDay: 1 },
-  { sno: 56, liveDate: "14-Mar-26", name: "Gardenia Glory RC 7.4kW AC 3", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "3:20:36", prevAmount: 346, prevUnits: 23, mtdAmount: 1502, mtdUnits: 100, avgAmountPerDay: 48, avgUnitsPerDay: 3 },
-  { sno: 57, liveDate: "14-Mar-26", name: "Moti Bagh RC 10kW AC", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:15:05", prevAmount: 8, prevUnits: 1, mtdAmount: 122, mtdUnits: 8, avgAmountPerDay: 4, avgUnitsPerDay: 0 },
-  { sno: 58, liveDate: "14-Mar-26", name: "MCD Parking Quarter Dilshad Garden RC 10kW AC 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 17, mtdUnits: 1, avgAmountPerDay: 1, avgUnitsPerDay: 0 },
-  { sno: 59, liveDate: "14-Mar-26", name: "MCD Parking Quarter Dilshad Garden RC 10kW AC 2", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 3, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 60, liveDate: "14-Mar-26", name: "ATS Pristine RC 7.4kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 61, liveDate: "16-Mar-26", name: "Rajokri RC 10kW AC", percentChange: -5, duration: "0:28:29", amount: 21, units: 1, prevDuration: "0:31:55", prevAmount: 22, prevUnits: 1, mtdAmount: 789, mtdUnits: 53, avgAmountPerDay: 25, avgUnitsPerDay: 2 },
-  { sno: 62, liveDate: "17-Mar-26", name: "ATS Greens Paradiso RC 7.4kW AC 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 63, liveDate: "17-Mar-26", name: "ATS Greens Paradiso RC 7.4kW AC 2", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "6:00:35", prevAmount: 248, prevUnits: 28, mtdAmount: 596, mtdUnits: 66, avgAmountPerDay: 19, avgUnitsPerDay: 2 },
-  { sno: 64, liveDate: "23-Mar-26", name: "Maharaja Agrasen College Vasundhara Enclave RC 15kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 65, liveDate: "23-Mar-26", name: "Maharaja Agrasen College Vasundhara Enclave RC 10kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 66, liveDate: "23-Mar-26", name: "Chacha Nehru Bal Chikitsalaya RC 10kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 67, liveDate: "23-Mar-26", name: "Chacha Nehru Bal Chikitsalaya RC 15kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 1, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 68, liveDate: "23-Mar-26", name: "MCD Parking Muskan Chowk 10kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 42, mtdUnits: 3, avgAmountPerDay: 1, avgUnitsPerDay: 0 },
-  { sno: 69, liveDate: "25-Mar-26", name: "The Social Stays Dehradun RC 7.4kW AC", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 22, mtdUnits: 1, avgAmountPerDay: 1, avgUnitsPerDay: 0 },
-];
+interface ReportData {
+  charger: string;
+  charger_id: string;
+  total_revenue: number;
+  total_units: number;
+  charging_time_seconds: number;
+  utilization_percentage: number;
+  total_sessions: number;
+}
 
-// ---------- 4. Noida Hub Sector 135 ----------
-const noidaHubData: ChargerData[] = [
-  { sno: 1, liveDate: "15-May-25", name: "Noida Hub RC 3.3kW AC Charger 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 0, mtdUnits: 0, avgAmountPerDay: 0, avgUnitsPerDay: 0 },
-  { sno: 2, liveDate: "15-May-25", name: "Noida Hub RC 60kW DC Charger 1", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 2952, mtdUnits: 219, avgAmountPerDay: 95, avgUnitsPerDay: 7 },
-  { sno: 3, liveDate: "15-May-25", name: "Noida Hub RC 60kW DC Charger 2", percentChange: 58, duration: "24:05:37", amount: 1172, units: 87, prevDuration: "9:12:22", prevAmount: 741, prevUnits: 55, mtdAmount: 36597, mtdUnits: 2697, avgAmountPerDay: 1181, avgUnitsPerDay: 87 },
-  { sno: 4, liveDate: "15-May-25", name: "Noida Hub RC 60kW DC Charger 3", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 12289, mtdUnits: 895, avgAmountPerDay: 396, avgUnitsPerDay: 29 },
-  { sno: 5, liveDate: "15-May-25", name: "Noida Hub RC 60kW DC Charger 4", percentChange: -6, duration: "5:27:59", amount: 644, units: 48, prevDuration: "5:29:48", prevAmount: 680, prevUnits: 51, mtdAmount: 14722, mtdUnits: 1107, avgAmountPerDay: 475, avgUnitsPerDay: 36 },
-  { sno: 6, liveDate: "15-May-25", name: "Noida Hub RC 60kW DC Charger 5", percentChange: -24, duration: "1:29:10", amount: 296, units: 22, prevDuration: "1:56:18", prevAmount: 384, prevUnits: 29, mtdAmount: 14930, mtdUnits: 1104, avgAmountPerDay: 482, avgUnitsPerDay: 36 },
-  { sno: 7, liveDate: "15-May-25", name: "Noida Hub RC 60kW DC Charger 6", percentChange: -12, duration: "2:59:28", amount: 554, units: 40, prevDuration: "2:35:43", prevAmount: 631, prevUnits: 45, mtdAmount: 14490, mtdUnits: 1037, avgAmountPerDay: 467, avgUnitsPerDay: 33 },
-  { sno: 8, liveDate: "15-May-25", name: "Noida Hub RC 7.4kW AC Charger 1", percentChange: 73, duration: "2:11:10", amount: 188, units: 14, prevDuration: "1:15:02", prevAmount: 109, prevUnits: 8, mtdAmount: 4807, mtdUnits: 350, avgAmountPerDay: 155, avgUnitsPerDay: 11 },
-  { sno: 9, liveDate: "15-May-25", name: "Noida Hub RC 7.4kW AC Charger 2", percentChange: "#DIV/0!", duration: "0:32:27", amount: 49, units: 4, prevDuration: "0:04:01", prevAmount: 0, prevUnits: 0, mtdAmount: 5202, mtdUnits: 357, avgAmountPerDay: 168, avgUnitsPerDay: 12 },
-  { sno: 10, liveDate: "02-Mar-26", name: "Noida Hub RC 7.4kW AC Charger 3", percentChange: "#DIV/0!", duration: "0:00:00", amount: 0, units: 0, prevDuration: "0:00:00", prevAmount: 0, prevUnits: 0, mtdAmount: 143, mtdUnits: 11, avgAmountPerDay: 5, avgUnitsPerDay: 0 },
-  { sno: 11, liveDate: "07-Jul-25", name: "Sector 135 RC 120kW DC", percentChange: 28, duration: "12:22:52", amount: 3823, units: 258, prevDuration: "10:10:57", prevAmount: 3067, prevUnits: 202, mtdAmount: 91608, mtdUnits: 5997, avgAmountPerDay: 2955, avgUnitsPerDay: 193 },
-  { sno: 12, liveDate: "07-Jul-25", name: "Sector 135 RC 60kW DC", percentChange: 86, duration: "15:37:14", amount: 2775, units: 196, prevDuration: "8:00:50", prevAmount: 1427, prevUnits: 105, mtdAmount: 33462, mtdUnits: 2348, avgAmountPerDay: 1079, avgUnitsPerDay: 76 },
-  { sno: 13, liveDate: "02-Dec-25", name: "Noida Hub RC 10kW AC Charger 1", percentChange: -100, duration: "0:00:00", amount: 0, units: 0, prevDuration: "1:36:10", prevAmount: 74, prevUnits: 4, mtdAmount: 2273, mtdUnits: 127, avgAmountPerDay: 73, avgUnitsPerDay: 4 },
-];
+interface DailyData {
+  date: string;
+  sessions: number;
+  duration: string;
+  amount: number;
+  units: number;
+  utilization: number;
+}
 
-type TimeFilter = "yesterday" | "lastWeek" | "lastMonth" | "all";
-
-// Helper: scale numeric fields based on time filter
-const scaleData = (data: ChargerData[], filter: TimeFilter): ChargerData[] => {
-  if (filter === "all") return data;
-  let factor = 1;
-  if (filter === "yesterday") factor = 0.03;
-  if (filter === "lastWeek") factor = 0.2;
-  if (filter === "lastMonth") factor = 0.8;
-
-  return data.map(item => ({
-    ...item,
-    amount: Math.floor(item.amount * factor),
-    units: Math.floor(item.units * factor),
-    prevAmount: Math.floor(item.prevAmount * factor),
-    prevUnits: Math.floor(item.prevUnits * factor),
-    mtdAmount: Math.floor(item.mtdAmount * factor),
-    mtdUnits: Math.floor(item.mtdUnits * factor),
-    avgAmountPerDay: Math.floor(item.avgAmountPerDay * factor),
-    avgUnitsPerDay: Math.floor(item.avgUnitsPerDay * factor),
-  }));
-};
-
-// Helper: compute totals for a table
-const computeTotals = (data: ChargerData[]) => {
-  const totalAmount = data.reduce((sum, d) => sum + d.amount, 0);
-  const totalUnits = data.reduce((sum, d) => sum + d.units, 0);
-  const totalPrevAmount = data.reduce((sum, d) => sum + d.prevAmount, 0);
-  const totalMTDAmount = data.reduce((sum, d) => sum + d.mtdAmount, 0);
-  const totalMTDUnits = data.reduce((sum, d) => sum + d.mtdUnits, 0);
-  return { totalAmount, totalUnits, totalPrevAmount, totalMTDAmount, totalMTDUnits };
-};
+type TimeFilter = "yesterday" | "lastWeek" | "lastMonth";
 
 export default function DailyTransactionsReport() {
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>("all");
+  const { get, post } = useApi();
 
-  // Apply filter to all categories
-  const filteredStandAloneDC = useMemo(() => scaleData(standAloneDCData, timeFilter), [timeFilter]);
-  const filteredHighwayDC = useMemo(() => scaleData(highwayDCData, timeFilter), [timeFilter]);
-  const filteredStandAloneAC = useMemo(() => scaleData(standAloneACData, timeFilter), [timeFilter]);
-  const filteredNoidaHub = useMemo(() => scaleData(noidaHubData, timeFilter), [timeFilter]);
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>("lastMonth");
+  const [loading, setLoading] = useState(true);
+  const [expandedCharger, setExpandedCharger] = useState<string | null>(null);
+  const [chargerDailyData, setChargerDailyData] = useState<Map<string, DailyData[]>>(new Map());
+  const [loadingDaily, setLoadingDaily] = useState<Map<string, boolean>>(new Map());
+
+  const [standaloneData, setStandaloneData] = useState<ChargerData[]>([]);
+  const [highwayData, setHighwayData] = useState<ChargerData[]>([]);
+  const [noidaHubData, setNoidaHubData] = useState<ChargerData[]>([]);
+  const [rwaData, setRwaData] = useState<ChargerData[]>([]);
+  const [unassignedData, setUnassignedData] = useState<ChargerData[]>([]);
+
+  const fetchAllData = async (startDate: string, endDate: string) => {
+    try {
+      setLoading(true);
+
+      // 1. Fetch ALL chargers
+      const chargerResponse = await get<any>("/public/charger-list");
+      const allChargers: Charger[] = chargerResponse?.data || chargerResponse || [];
+
+      // 2. Fetch group assignments
+      const groupResponse = await post<any>("/admin/group-list");
+      const groupData = groupResponse?.data || groupResponse || [];
+
+      // Create maps for group and install date
+      const groupMap = new Map<string, string>();
+      const installDateMap = new Map<string, string>();
+
+      groupData.forEach((group: GroupAssignment) => {
+        if (group.chargerId && group.group) {
+          groupMap.set(group.chargerId, group.group);
+          if (group.installDate) {
+            installDateMap.set(group.chargerId, formatInstallDate(group.installDate));
+          }
+        }
+      });
+
+      // 3. Fetch report data
+      const reportResponse = await get<any>(`/public/report?start_date=${startDate}&end_date=${endDate}`);
+      const reportData = reportResponse?.data || reportResponse || [];
+
+      // Create a map for report data by charger_id
+      const reportMap = new Map<string, ReportData>();
+      reportData.forEach((item: ReportData) => {
+        reportMap.set(item.charger_id, item);
+      });
+
+      // 4. Process ALL chargers
+      const standalone: ChargerData[] = [];
+      const highway: ChargerData[] = [];
+      const noidaHub: ChargerData[] = [];
+      const rwa: ChargerData[] = [];
+      const unassigned: ChargerData[] = [];
+
+      allChargers.forEach((charger: Charger, index: number) => {
+        const chargerGroup = groupMap.get(charger.id) || "";
+        const reportItem = reportMap.get(charger.id);
+        const installDate = installDateMap.get(charger.id) || "Not Set";
+
+        const sessions = reportItem?.total_sessions || 0;
+        const chargingSeconds = reportItem?.charging_time_seconds || 0;
+        const revenue = Math.round(reportItem?.total_revenue || 0);
+        const units = Math.round((reportItem?.total_units || 0) / 1000);
+        const utilization = reportItem?.utilization_percentage || 0;
+
+        const chargerInfo: ChargerData = {
+          sno: index + 1,
+          name: charger.name,
+          sessions: sessions,
+          duration: formatSeconds(chargingSeconds),
+          amount: revenue,
+          units: units,
+          percentage: utilization,
+          installDate: installDate,
+          chargerId: charger.id,
+          group: chargerGroup,
+          power_output: charger.power_output
+        };
+
+        if (chargerGroup === "HIGHWAY") {
+          highway.push(chargerInfo);
+        } else if (chargerGroup === "NOIDA135HUB") {
+          noidaHub.push(chargerInfo);
+        } else if (chargerGroup === "RWA") {
+          rwa.push(chargerInfo);
+        } else if (chargerGroup === "STANDALONE") {
+          standalone.push(chargerInfo);
+        } else {
+          unassigned.push(chargerInfo);
+        }
+      });
+
+      // Sort by amount
+      standalone.sort((a, b) => b.amount - a.amount);
+      highway.sort((a, b) => b.amount - a.amount);
+      noidaHub.sort((a, b) => b.amount - a.amount);
+      rwa.sort((a, b) => b.amount - a.amount);
+      unassigned.sort((a, b) => b.amount - a.amount);
+
+      // Update sno
+      standalone.forEach((item, idx) => item.sno = idx + 1);
+      highway.forEach((item, idx) => item.sno = idx + 1);
+      noidaHub.forEach((item, idx) => item.sno = idx + 1);
+      rwa.forEach((item, idx) => item.sno = idx + 1);
+      unassigned.forEach((item, idx) => item.sno = idx + 1);
+
+      setStandaloneData(standalone);
+      setHighwayData(highway);
+      setNoidaHubData(noidaHub);
+      setRwaData(rwa);
+      setUnassignedData(unassigned);
+
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch last 7 days data for a specific charger (makes 7 separate API calls)
+  const fetchChargerLast7Days = async (chargerId: string, chargerName: string) => {
+    // If already loaded, just toggle expand/collapse
+    if (chargerDailyData.has(chargerId)) {
+      setExpandedCharger(expandedCharger === chargerId ? null : chargerId);
+      return;
+    }
+
+    setLoadingDaily(prev => new Map(prev).set(chargerId, true));
+    setExpandedCharger(chargerId);
+
+    try {
+      const today = new Date();
+      const formatLocal = (d: Date) => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
+
+      const dailyDataPromises = [];
+      
+      // Create 7 promises for each day (last 7 days)
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        const dateStr = formatLocal(date);
+        const displayDate = date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+        
+        // Make API call for this single day
+        const promise = get<any>(`/public/report?start_date=${dateStr}&end_date=${dateStr}`)
+          .then(response => {
+            const data = response?.data || response || [];
+            const dayData = data.find((item: any) => item.charger_id === chargerId);
+            return {
+              date: displayDate,
+              fullDate: dateStr,
+              sessions: dayData?.total_sessions || 0,
+              duration: formatSeconds(dayData?.charging_time_seconds || 0),
+              amount: Math.round(dayData?.total_revenue || 0),
+              units: Math.round((dayData?.total_units || 0) / 1000),
+              utilization: dayData?.utilization_percentage || 0
+            };
+          })
+          .catch(err => {
+            console.error(`Error fetching data for ${displayDate}:`, err);
+            return {
+              date: displayDate,
+              fullDate: dateStr,
+              sessions: 0,
+              duration: "0h 0m",
+              amount: 0,
+              units: 0,
+              utilization: 0
+            };
+          });
+        
+        dailyDataPromises.push(promise);
+      }
+      
+      // Wait for all API calls to complete
+      const dailyData = await Promise.all(dailyDataPromises);
+      setChargerDailyData(prev => new Map(prev).set(chargerId, dailyData));
+      
+    } catch (err) {
+      console.error("Error fetching daily data:", err);
+    } finally {
+      setLoadingDaily(prev => new Map(prev).set(chargerId, false));
+    }
+  };
+
+  const formatInstallDate = (dateString: string) => {
+    if (!dateString) return "Not Set";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const formatSeconds = (seconds: number) => {
+    if (!seconds || seconds === 0) return "0h 0m";
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+  };
+
+  const getDateRange = (filter: TimeFilter) => {
+    const today = new Date();
+
+    const formatLocal = (d: Date) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    switch (filter) {
+      case "yesterday": {
+        const y = new Date(today);
+        y.setDate(today.getDate() - 1);
+        return { startDate: formatLocal(y), endDate: formatLocal(y) };
+      }
+
+      case "lastWeek": {
+        const currentDay = today.getDay();
+        const daysSinceMonday = currentDay === 0 ? 6 : currentDay - 1;
+        const currentWeekMonday = new Date(today);
+        currentWeekMonday.setDate(today.getDate() - daysSinceMonday);
+        const lastWeekMonday = new Date(currentWeekMonday);
+        lastWeekMonday.setDate(currentWeekMonday.getDate() - 7);
+        const lastWeekSunday = new Date(currentWeekMonday);
+        lastWeekSunday.setDate(currentWeekMonday.getDate() - 1);
+        return {
+          startDate: formatLocal(lastWeekMonday),
+          endDate: formatLocal(lastWeekSunday),
+        };
+      }
+
+      case "lastMonth": {
+        const firstDayLastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        const lastDayLastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+        return {
+          startDate: formatLocal(firstDayLastMonth),
+          endDate: formatLocal(lastDayLastMonth),
+        };
+      }
+    }
+
+    return { startDate: formatLocal(today), endDate: formatLocal(today) };
+  };
+
+  const handleFilterChange = (filter: TimeFilter) => {
+    setTimeFilter(filter);
+    const { startDate, endDate } = getDateRange(filter);
+    fetchAllData(startDate, endDate);
+    // Clear expanded data when filter changes
+    setExpandedCharger(null);
+    setChargerDailyData(new Map());
+  };
+
+  useEffect(() => {
+    const { startDate, endDate } = getDateRange("lastMonth");
+    fetchAllData(startDate, endDate);
+  }, []);
+
+  const exportTableToCSV = (title: string, data: ChargerData[]) => {
+    if (data.length === 0) {
+      alert(`No data available for ${title}`);
+      return;
+    }
+
+    const headers = ["S.No", "Charger Name", "Install Date", "Sessions", "Duration", "Amount (₹)", "Units (kWh)", "Utilization %"];
+    const rows = data.map((c) => [
+      c.sno, 
+      c.name, 
+      c.installDate, 
+      c.sessions, 
+      c.duration, 
+      c.amount, 
+      c.units, 
+      `${c.percentage.toFixed(1)}%`
+    ]);
+    
+    const totals = {
+      sessions: data.reduce((sum, d) => sum + d.sessions, 0),
+      amount: data.reduce((sum, d) => sum + d.amount, 0),
+      units: data.reduce((sum, d) => sum + d.units, 0)
+    };
+    
+    rows.push(["TOTAL", "", "", totals.sessions, "", totals.amount, totals.units, ""]);
+    
+    const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title}-${getFilterLabel()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportAllToCSV = () => {
+    const allData = [...standaloneData, ...highwayData, ...noidaHubData, ...rwaData, ...unassignedData];
+    if (allData.length === 0) {
+      alert("No data available to export");
+      return;
+    }
+
+    const headers = ["S.No", "Charger Name", "Group", "Install Date", "Sessions", "Duration", "Amount (₹)", "Units (kWh)", "Utilization %"];
+    const rows = allData.map((c) => [
+      c.sno, 
+      c.name, 
+      c.group || "Unassigned", 
+      c.installDate, 
+      c.sessions, 
+      c.duration, 
+      c.amount, 
+      c.units, 
+      `${c.percentage.toFixed(1)}%`
+    ]);
+    
+    const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `daily-report-${getFilterLabel()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const getFilterLabel = () => {
     switch (timeFilter) {
       case "yesterday": return "Yesterday";
       case "lastWeek": return "Last Week";
       case "lastMonth": return "Last Month";
-      default: return "All Time";
     }
   };
 
-  const getPercentChangeColor = (change: number | string) => {
-    if (change === "#DIV/0!") return "text-gray-400";
-    const num = typeof change === "number" ? change : 0;
-    if (num > 0) return "text-green-600";
-    if (num < 0) return "text-red-600";
-    return "text-gray-500";
+  const getUtilizationColor = (percentage: number) => {
+    if (percentage >= 3.9) return "text-green-600";
+    return "text-red-500";
   };
 
-  const getPercentChangeIcon = (change: number | string) => {
-    if (change === "#DIV/0!") return null;
-    const num = typeof change === "number" ? change : 0;
-    if (num > 0) return <TrendingUp size={10} className="text-green-600" />;
-    if (num < 0) return <TrendingDown size={10} className="text-red-600" />;
-    return null;
+  const renderExpandedRow = (charger: ChargerData) => {
+    const dailyData = chargerDailyData.get(charger.chargerId!);
+    const isLoading = loadingDaily.get(charger.chargerId!);
+
+    if (isLoading) {
+      return (
+        <tr key={`${charger.chargerId}-loading`} className="bg-gray-50">
+          <td colSpan={9} className="px-4 py-4 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+              <span className="text-xs text-gray-500">Loading last 7 days data...</span>
+            </div>
+          </td>
+        </tr>
+      );
+    }
+
+    if (!dailyData || dailyData.length === 0) {
+      return (
+        <tr key={`${charger.chargerId}-no-data`} className="bg-gray-50">
+          <td colSpan={9} className="px-4 py-4 text-center text-gray-400 text-xs">
+            No data available for last 7 days
+          </td>
+        </tr>
+      );
+    }
+
+    const totalSessions = dailyData.reduce((sum, d) => sum + d.sessions, 0);
+    const totalAmount = dailyData.reduce((sum, d) => sum + d.amount, 0);
+    const totalUnits = dailyData.reduce((sum, d) => sum + d.units, 0);
+
+    return (
+      <>
+        <tr key={`${charger.chargerId}-trend-header`} className="bg-blue-50/30">
+          <td colSpan={9} className="px-4 py-2">
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="w-3 h-3 text-blue-600" />
+              <span className="text-xs font-semibold text-blue-700">Last 7 Days Trend</span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-blue-200">
+                    <th className="px-2 py-1 text-left text-gray-600">Date</th>
+                    <th className="px-2 py-1 text-center text-gray-600">Sessions</th>
+                    <th className="px-2 py-1 text-center text-gray-600">Duration</th>
+                    <th className="px-2 py-1 text-right text-gray-600">Amount (₹)</th>
+                    <th className="px-2 py-1 text-right text-gray-600">Units (kWh)</th>
+                    <th className="px-2 py-1 text-center text-gray-600">Utilization</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dailyData.map((day, idx) => (
+                    <tr key={`${charger.chargerId}-day-${idx}`} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="px-2 py-1.5 font-medium text-gray-700">{day.date}</td>
+                      <td className="px-2 py-1.5 text-center text-gray-600">{day.sessions}</td>
+                      <td className="px-2 py-1.5 text-center text-gray-500">{day.duration}</td>
+                      <td className="px-2 py-1.5 text-right font-medium text-gray-700">₹{day.amount.toLocaleString()}</td>
+                      <td className="px-2 py-1.5 text-right text-gray-600">{day.units.toLocaleString()}</td>
+                      <td className="px-2 py-1.5 text-center">
+                        <span className={`font-medium ${getUtilizationColor(day.utilization)}`}>
+                          {day.utilization.toFixed(1)}%
+                        </span>
+                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+           </td>
+        </tr>
+        <tr key={`${charger.chargerId}-summary`} className="bg-gray-100">
+          <td colSpan={9} className="px-4 py-2">
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-4">
+                <span className="text-gray-600">Weekly Comparison:</span>
+                <div className="flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3 text-green-600" />
+                  <span className="text-green-600">
+                    Sessions: {totalSessions}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-600">Revenue:</span>
+                  <span className="font-semibold text-blue-600">
+                    ₹{totalAmount.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-600">Units:</span>
+                  <span className="font-semibold text-purple-600">
+                    {totalUnits.toLocaleString()} kWh
+                  </span>
+                </div>
+              </div>
+            </div>
+           </td>
+        </tr>
+      </>
+    );
   };
 
-  // Export all data (combined CSV)
-  const exportToCSV = () => {
-    const allData = [...filteredStandAloneDC, ...filteredHighwayDC, ...filteredStandAloneAC, ...filteredNoidaHub];
-    const headers = ["S.No", "Live Date", "Charger Name", "% Change", "Duration", "Amount", "Units", "Prev Duration", "Prev Amount", "Prev Units", "MTD Amount", "MTD Units", "Avg Amount/Day", "Avg Units/Day"];
-    const rows = allData.map((c, i) => [
-      i + 1, c.liveDate, c.name, c.percentChange, c.duration, c.amount, c.units,
-      c.prevDuration, c.prevAmount, c.prevUnits, c.mtdAmount, c.mtdUnits,
-      c.avgAmountPerDay, c.avgUnitsPerDay
-    ]);
-    const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `daily-report-${getFilterLabel()}-${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const renderTable = (title: string, data: ChargerData[], gradientFrom: string, gradientTo: string) => {
+    if (data.length === 0) return null;
 
-  // Table renderer
-  const renderTable = (title: string, data: ChargerData[]) => {
-    const totals = computeTotals(data);
+    const totals = {
+      sessions: data.reduce((sum, d) => sum + d.sessions, 0),
+      amount: data.reduce((sum, d) => sum + d.amount, 0),
+      units: data.reduce((sum, d) => sum + d.units, 0)
+    };
+
     return (
       <div className="mb-8">
-        <h3 className="text-base font-semibold text-gray-700 mb-2">{title}</h3>
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-base font-semibold text-gray-700">{title} ({data.length})</h3>
+          <button
+            onClick={() => exportTableToCSV(title, data)}
+            className="px-3 py-1.5 text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all flex items-center gap-2 shadow-sm"
+          >
+            <Download size={12} />
+          </button>
+        </div>
         <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-[11px]">
-              <thead className="bg-gray-100 border-b border-gray-200">
-                <tr>
-                  <th className="px-2 py-2 text-left font-semibold text-gray-600 w-10">S.No</th>
-                  <th className="px-2 py-2 text-left font-semibold text-gray-600 w-20">Live Date</th>
-                  <th className="px-2 py-2 text-left font-semibold text-gray-600">Charger Name</th>
-                  <th className="px-2 py-2 text-center font-semibold text-gray-600 w-16">% Change</th>
-                  <th className="px-2 py-2 text-center font-semibold text-gray-600 w-20">Duration</th>
-                  <th className="px-2 py-2 text-right font-semibold text-gray-600 w-20">Amount (₹)</th>
-                  <th className="px-2 py-2 text-right font-semibold text-gray-600 w-20">Units (kWh)</th>
-                  <th className="px-2 py-2 text-center font-semibold text-gray-600 w-20">Prev Duration</th>
-                  <th className="px-2 py-2 text-right font-semibold text-gray-600 w-20">Prev Amount</th>
-                  <th className="px-2 py-2 text-right font-semibold text-gray-600 w-16">Prev Units</th>
-                  <th className="px-2 py-2 text-right font-semibold text-gray-600 w-20">MTD Amount</th>
-                  <th className="px-2 py-2 text-right font-semibold text-gray-600 w-16">MTD Units</th>
-                  <th className="px-2 py-2 text-right font-semibold text-gray-600 w-20">Avg Amount/Day</th>
-                  <th className="px-2 py-2 text-right font-semibold text-gray-600 w-20">Avg Units/Day</th>
-                </tr>
+            <table className="w-full text-xs">
+              <thead className={`bg-gradient-to-r ${gradientFrom} ${gradientTo} border-b border-gray-200`}>
+                <tr className="text-left">
+                  <th className="px-4 py-3 font-semibold text-gray-700 w-10"></th>
+                  <th className="px-4 py-3 font-semibold text-gray-700 w-16">S.No</th>
+                  <th className="px-4 py-3 font-semibold text-gray-700">Charger Name</th>
+                  <th className="px-4 py-3 font-semibold text-gray-700 text-center w-28">Install Date</th>
+                  <th className="px-4 py-3 font-semibold text-gray-700 text-center w-20">Sessions</th>
+                  <th className="px-4 py-3 font-semibold text-gray-700 text-center w-24">Duration</th>
+                  <th className="px-4 py-3 font-semibold text-gray-700 text-right w-28">Amount (₹)</th>
+                  <th className="px-4 py-3 font-semibold text-gray-700 text-right w-28">Units (kWh)</th>
+                  <th className="px-4 py-3 font-semibold text-gray-700 text-center w-28">Utilization %</th>
+                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {data.map((charger, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-2 py-1.5 text-gray-500">{idx + 1}</td>
-                    <td className="px-2 py-1.5 text-gray-600 whitespace-nowrap">{charger.liveDate}</td>
-                    <td className="px-2 py-1.5 text-gray-700 max-w-[220px] truncate" title={charger.name}>{charger.name}</td>
-                    <td className="px-2 py-1.5 text-center">
-                      <div className="flex items-center justify-center gap-0.5">
-                        {getPercentChangeIcon(charger.percentChange)}
-                        <span className={getPercentChangeColor(charger.percentChange)}>
-                          {typeof charger.percentChange === 'number' ? `${charger.percentChange}%` : charger.percentChange}
+                {data.map((charger) => (
+                  <React.Fragment key={charger.chargerId || charger.sno}>
+                    <tr className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => fetchChargerLast7Days(charger.chargerId!, charger.name)}>
+                      <td className="px-4 py-2">
+                        {expandedCharger === charger.chargerId ? 
+                          <ChevronDown className="w-4 h-4 text-gray-500" /> : 
+                          <ChevronRight className="w-4 h-4 text-gray-500" />
+                        }
+                       </td>
+                      <td className="px-4 py-2 text-gray-500">{charger.sno}</td>
+                      <td className="px-4 py-2 text-gray-700 max-w-[300px] truncate" title={charger.name}>
+                        {charger.name}
+                       </td>
+                      <td className="px-4 py-2 text-center">{charger.installDate}</td>
+                      <td className="px-4 py-2 text-center text-gray-600">{charger.sessions}</td>
+                      <td className="px-4 py-2 text-center text-gray-500">{charger.duration}</td>
+                      <td className="px-4 py-2 text-right font-medium text-gray-700">
+                        ₹{charger.amount.toLocaleString()}
+                       </td>
+                      <td className="px-4 py-2 text-right text-gray-600">{charger.units.toLocaleString()}</td>
+                      <td className="px-4 py-2 text-center">
+                        <span className={`font-medium ${getUtilizationColor(charger.percentage)}`}>
+                          {charger.percentage.toFixed(1)}%
                         </span>
-                      </div>
-                    </td>
-                    <td className="px-2 py-1.5 text-center text-gray-500">{charger.duration}</td>
-                    <td className="px-2 py-1.5 text-right font-medium text-gray-700">₹{charger.amount.toLocaleString()}</td>
-                    <td className="px-2 py-1.5 text-right text-gray-600">{charger.units.toLocaleString()}</td>
-                    <td className="px-2 py-1.5 text-center text-gray-400">{charger.prevDuration}</td>
-                    <td className="px-2 py-1.5 text-right text-gray-500">₹{charger.prevAmount.toLocaleString()}</td>
-                    <td className="px-2 py-1.5 text-right text-gray-500">{charger.prevUnits.toLocaleString()}</td>
-                    <td className="px-2 py-1.5 text-right text-blue-700 font-medium">₹{charger.mtdAmount.toLocaleString()}</td>
-                    <td className="px-2 py-1.5 text-right text-green-700 font-medium">{charger.mtdUnits.toLocaleString()}</td>
-                    <td className="px-2 py-1.5 text-right text-gray-700">₹{charger.avgAmountPerDay.toLocaleString()}</td>
-                    <td className="px-2 py-1.5 text-right text-gray-700">{charger.avgUnitsPerDay.toLocaleString()}</td>
-                  </tr>
+                       </td>
+                    </tr>
+                    {expandedCharger === charger.chargerId && renderExpandedRow(charger)}
+                  </React.Fragment>
                 ))}
               </tbody>
               <tfoot className="bg-gray-100 border-t border-gray-200 font-medium">
                 <tr>
-                  <td colSpan={5} className="px-2 py-1.5 text-right text-gray-600 text-[10px]">Total:</td>
-                  <td className="px-2 py-1.5 text-right text-gray-800 font-semibold">₹{totals.totalAmount.toLocaleString()}</td>
-                  <td className="px-2 py-1.5 text-right text-gray-800 font-semibold">{totals.totalUnits.toLocaleString()}</td>
-                  <td colSpan={2}></td>
-                  <td className="px-2 py-1.5 text-right text-gray-600">₹{totals.totalPrevAmount.toLocaleString()}</td>
-                  <td className="px-2 py-1.5 text-right text-blue-700 font-semibold">₹{totals.totalMTDAmount.toLocaleString()}</td>
-                  <td className="px-2 py-1.5 text-right text-green-700 font-semibold">{totals.totalMTDUnits.toLocaleString()}</td>
-                  <td colSpan={2}></td>
+                  <td colSpan={4} className="px-4 py-2 text-right text-gray-600">Total:</td>
+                  <td className="px-4 py-2 text-center text-gray-800 font-semibold">{totals.sessions}</td>
+                  <td className="px-4 py-2 text-center text-gray-500">-</td>
+                  <td className="px-4 py-2 text-right text-gray-800 font-semibold">₹{totals.amount.toLocaleString()}</td>
+                  <td className="px-4 py-2 text-right text-gray-800 font-semibold">{totals.units.toLocaleString()}</td>
+                  <td className="px-4 py-2 text-center text-gray-500">-</td>
                 </tr>
               </tfoot>
             </table>
@@ -308,57 +1769,72 @@ export default function DailyTransactionsReport() {
     );
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96 mt-16">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0094FE] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading report data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full min-h-screen bg-gray-100 overflow-x-hidden">
-      <div className="w-full px-4 py-4 mt-16">
-        {/* Header */}
-        <div className="mb-5">
-          <h1 className="text-xl font-semibold text-gray-800">Daily CMS Transactions Report</h1>
-          <p className="text-xs text-gray-500 mt-1">Tuesday, 31st March 2026</p>
-        </div>
-
-        {/* Time Filter Buttons */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          {(["all", "yesterday", "lastWeek", "lastMonth"] as const).map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setTimeFilter(filter)}
-              className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                timeFilter === filter
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-300"
-              }`}
-            >
-              {filter === "all" ? "All Time" : filter === "yesterday" ? "Yesterday" : filter === "lastWeek" ? "Last Week" : "Last Month"}
-            </button>
-          ))}
-        </div>
-
-        {/* Active Filter Indicator */}
-        {timeFilter !== "all" && (
-          <div className="mb-5 px-3 py-1.5 bg-blue-100 rounded-lg inline-flex items-center gap-2">
-            <Calendar size={12} className="text-blue-600" />
-            <span className="text-xs text-blue-700">
-              Showing data for: <strong>{getFilterLabel()}</strong>
-            </span>
-          </div>
-        )}
-
-        {/* All Four Tables */}
-        {renderTable("Stand-Alone DC Chargers", filteredStandAloneDC)}
-        {renderTable("Highway Stand-Alone DC Chargers", filteredHighwayDC)}
-        {renderTable("Stand-Alone AC Chargers", filteredStandAloneAC)}
-        {renderTable("Noida Hub Sector 135", filteredNoidaHub)}
-
-        {/* Export Button */}
-        <div className="flex justify-end mt-4">
+    <div className="w-full min-h-screen bg-gray-50 overflow-x-hidden">
+      <DashboardHeader
+        subtitle={`${getFilterLabel()} Report`}
+        title={'Daily CMS Transactions Report'}
+      />
+      <div className="w-full px-6 py-6 mt-16">
+        <div className="flex gap-3 mb-6">
           <button
-            onClick={exportToCSV}
-            className="px-4 py-1.5 text-xs bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2 shadow-sm text-gray-600"
+            onClick={() => handleFilterChange("yesterday")}
+            className={`px-6 py-2 rounded-lg text-xs font-medium transition-all ${timeFilter === "yesterday"
+                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+                : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+              }`}
           >
-            <Download size={12} /> Export Report
+            Yesterday
+          </button>
+          <button
+            onClick={() => handleFilterChange("lastWeek")}
+            className={`px-6 py-2 rounded-lg text-xs font-medium transition-all ${timeFilter === "lastWeek"
+                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+                : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+              }`}
+          >
+            Last Week
+          </button>
+          <button
+            onClick={() => handleFilterChange("lastMonth")}
+            className={`px-5 py-1 rounded-lg text-xs font-medium transition-all ${timeFilter === "lastMonth"
+                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+                : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300 border border-gray-300"
+              }`}
+          >
+            Last Month
+          </button>
+          <button
+            onClick={exportAllToCSV}
+            className="px-5 text-xs bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center gap-2"
+          >
+            <Download size={14} /> Export All Reports
           </button>
         </div>
+
+        {renderTable("Standalone Chargers", standaloneData, "from-green-100", "to-green-50")}
+        {renderTable("Highway Chargers", highwayData, "from-purple-100", "to-purple-50")}
+        {renderTable("Noida Hub Sector 135", noidaHubData, "from-blue-100", "to-blue-50")}
+        {renderTable("RWA Chargers", rwaData, "from-orange-100", "to-orange-50")}
+        {renderTable("Unassigned Chargers", unassignedData, "from-gray-100", "to-gray-50")}
+
+        {standaloneData.length === 0 && highwayData.length === 0 &&
+          noidaHubData.length === 0 && rwaData.length === 0 && unassignedData.length === 0 && (
+            <div className="text-center py-12 bg-white rounded-lg">
+              <p className="text-gray-500">No data found for selected date range</p>
+            </div>
+          )}
       </div>
     </div>
   );
